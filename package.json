@@ -1,0 +1,19 @@
+{
+  "name": "fluid-trap",
+  "version": "0.0.1",
+  "description": "trap test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fluid-music"
+  ],
+  "author": "Charles Holbrow",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@fluid-music/kit": "^4.0.2",
+    "@fluid-music/tr-808": "file:../open-drums/tr-808",
+    "fluid-music": "file:../../cybr/fluid-music"
+  }
+}
