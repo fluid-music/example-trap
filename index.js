@@ -1,3 +1,6 @@
+const fs = require('fs')
+const path = require('path')
+
 const { FluidSession, plugins, techniques } = require('fluid-music')
 const tr808 = require('@fluid-music/tr-808')
 const kit = require('@fluid-music/kit')
@@ -79,6 +82,9 @@ const padSynthB = plugins.podolskiVst2Presets.brightPad()
 padSynthB.parameters.vcf0Cutoff = 2
 padSynthB.parameters.dly1MixPercent = 12
 
+const padSynthSuper = new plugins.PodolskiVst2()
+padSynthSuper.vst2.presetBase64 = fs.readFileSync(path.join(__dirname, 'presets', 'podo-superwave.FXP').toString('base64'))
+
 const score = {
   r:      '1 + 2 + 3 + 4 + ',//1 + 2 + 3 + 4 + '
   snare: ['    K       K   ', '    K       K   ', '    K       K   ', '    K       K   '],
@@ -89,7 +95,7 @@ const score = {
   pads: {
     r: '1 2 3 4 ',
     padA:  ['        ', 'b-      ', '        ', 'd-      '],
-    padB:  ['A-      ', 'B-      ', 'A---    ', 'B---    '],
+    padC:  ['A-      ', 'B-      ', 'A---    ', 'B---    '],
   }
 }
 
@@ -110,6 +116,7 @@ const session = new FluidSession({ bpm: 63, loopStartTime: 1, loopDuration: 4 },
     { name: 'pads', gainDb: -8, tLibrary: chordLibrary, sends: [{ to: 'verb', gainDb: 0 }],  plugins: [ducker], children: [
       { name: 'padA', gainDb: -7, plugins: [padSynthA] },
       { name: 'padB', gainDb: 0, plugins: [padSynthB] },
+      { name: 'padC', gainDb: -12, plugins: [padSynthSuper] },
     ]},
     { name: 'verb', gainDb: -15, plugins: [verb] },
     { name: 'delay16', gainDb: 0, plugins: [delay16] },
