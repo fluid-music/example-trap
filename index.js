@@ -95,7 +95,7 @@ const score = {
   pads: {
     r: '1 2 3 4 ',
     padA:  ['        ', 'b-      ', '        ', 'd-      '],
-    padC:  ['A-      ', 'B-      ', 'A---    ', 'B---    '],
+    padB:  ['A-      ', 'B-      ', 'A---    ', 'B---    '],
   }
 }
 
@@ -127,7 +127,7 @@ const session = new FluidSession({ bpm: 63, loopStartTime: 1, loopDuration: 4 },
 session.insertScore(score, { startTime: 1 })
 session.finalize()
 const sessionName = 'trap'
-session.saveAsReaperFile(sessionName)
-// session.sendToServer()
+// session.saveAsReaperFile(sessionName)
+session.sendToServer()
   .catch(e => console.error('Error:', e))
   .then(() => console.warn('Saved:',  sessionName))
