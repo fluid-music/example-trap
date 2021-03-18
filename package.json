@@ -13,6 +13,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@fluid-music/kit": "^4.0.2",
+    "@fluid-music/rides": "0.0.2",
     "@fluid-music/tr-808": "file:../open-drums/tr-808",
     "fluid-music": "file:../../fluid/fluid-music"
   }
