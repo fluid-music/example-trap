@@ -1,4 +1,7 @@
-const { techniques } = require('fluid-music')
+const fluid = require('fluid-music')
+const { note } = require('fluid-music/built/cybr/midiclip')
+const { MidiNote, MidiChord } = require('fluid-music/built/techniques')
+const { techniques, FluidAudioFile } = fluid
 
 class Stutter {
   /**
@@ -163,13 +166,153 @@ class DelayAcrossTracks {
   }
 }
 
+function makeArpTLibrary(root, intervals, ...delays) {
+  const tLibrary = {}
+  const noteTechniques = intervals.map(interval => new techniques.MidiNote({ note: root + interval }))
+
+  // for (const [i, noteTechnique] of Object.entries(noteTechniques)) 
+  noteTechniques.forEach((noteTechnique, i) => {
+    noteTechnique = new DecreasingIntensity(noteTechnique, 0.8)
+    tLibrary[i] = {
+      use(context) {
+        context = {...context}
+        context.duration += 0.005
+        noteTechnique.use(context)
+        for (const [i, delay] of delays.entries()) {
+          const trackName = context.track.name+'D'+(parseInt(i)+1)
+          const onOtherTrack = new OnOtherTrack(trackName, noteTechnique)
+          const nudged = new techniques.Nudge(delay, onOtherTrack)
+          nudged.use(context)
+        }
+      }
+    }
+  })
+  return tLibrary
+}
+
+class OnOtherTrack {
+  constructor(trackOrTrackName, technique) {
+    this.track = null
+    this.trackName = null
+    this.technique = technique
+
+    if (trackOrTrackName instanceof fluid.FluidTrack) {
+      this.track = trackOrTrackName
+    } else if (typeof trackOrTrackName === 'string') {
+      this.trackName = trackOrTrackName
+    } else {
+      throw new Error('invalid track:', + trackOrTrackName)
+    }
+  }
+
+  /**
+   * @param {import('fluid-music').UseContext} context
+   */
+  use(context) {
+    const otherTrack = (this.track) ? this.track : context.session.getOrCreateTrackByName(this.trackName)
+    context = {...context, ...{track: otherTrack}}
+    this.technique.use(context)
+  }
+}
+
+class DelaysOnOtherTracks {
+  constructor(delays, technique) {
+    this.technique = technique
+    this.delays = delays
+  }
+  use(context) {
+    this.technique.use(context)
+    for (let i = 0; i < this.delays.length; i++) {
+      const delay = this.delays[i]
+      const trackName = context.track.name+'D'+(i+1)
+      const nudged = new techniques.Nudge(delay, this.technique)
+      const onOtherTrack = new OnOtherTrack(trackName, nudged)
+      
+      onOtherTrack.use(context)
+    }
+  }
+}
+
+class DecreasingIntensity { 
+  constructor(technique, maxIntensity = 1) {
+    this.technique = technique
+    this.maxIntensity = maxIntensity
+  }
+  /** @param {import('fluid-music').UseContext} context */
+  use(context) {
+    // how far into the clip are we
+    const complete = (context.startTime - context.clip.startTime) / context.clip.duration
+    context.d.intensity = (1 - complete) * this.maxIntensity
+    this.technique.use(context)
+  }
+}
+
+
+function makeArpScore(root, intervals, delays) {
+  const score = {
+    tLibrary: makeArpTLibrary(root, intervals, ...delays),
+    r: '1'+new Array(intervals.length-1).fill(null).map(() => '.').join(''),
+    arp: new Array(intervals.length).fill(null).map((_, i) => i).join('')
+  }
+  score.r = new Array(4).fill(score.r).join('')
+  score.arp = new Array(4).fill(score.arp).join('')
+  console.log(score)
+  return score
+}
+
+class Arpeggiator {
+  /**
+   * @param iterations the number of times to repeat this technique
+   * @param midiChordOrNotes can be a MidiChord, or an array. If it is an array,
+   * it must may contain a combination of midi note numbers and techniques
+   */
+  constructor(iterations, midiChordOrNotes) {
+    this.iterations = (typeof iterations === 'number') ? iterations : 5
+
+    if (midiChordOrNotes instanceof MidiChord) this.notes = midiChordOrNotes.notes.map(n => MidiNote(n))
+    else if (Array.isArray(midiChordOrNotes)) this.notes = midiChordOrNotes.map(n => typeof n === 'number' ? new MidiNote(n) : n)
+    else throw new Error('Unexpected Arppegiator technique: ' + JSON.stringify(midiChordOrNotes))
+  }
+
+  /** @param {import('fluid-music').UseContext} context */
+  use(context) {
+
+    context = {...context}
+    const durationDeltaSeconds = 0.008
+    const durationDelta = context.session.timeSecondsToWholeNotes(durationDeltaSeconds)
+    const originalStartTimeSeconds = context.startTimeSeconds
+    const originalStartTime = context.startTime
+    const originalDuration = context.duration
+    const originalDurationSeconds = context.durationSeconds
+    const stepDuration = (originalDuration / this.iterations)
+    const stepDurationSeconds = (originalDurationSeconds / this.iterations)
+    const clipFraction = (context.startTime - context.clip.startTime) / context.clip.duration
+
+    for (let i = 0; i < this.iterations; i++) {
+      const technique = this.notes[i % this.notes.length]
+      const fraction = i / this.iterations
+      context.startTime = originalStartTime + i * stepDuration
+      context.startTimeSeconds = originalStartTimeSeconds + i + stepDurationSeconds
+      context.duration = stepDuration + durationDelta
+      context.durationSeconds = stepDurationSeconds + durationDeltaSeconds
+      context.d.intensity = (1-fraction) * (1-clipFraction)
+      technique.use(context)
+    }
+  }
+}
+
 module.exports = {
+  Arpeggiator,
   Stutter,
   StutterSoftOddEvents,
   StutterRampIntensityDown,
   Sequence,
+  OnOtherTrack,
+  DelaysOnOtherTracks,
+  makeArpScore,
   makeMidiNoteSequence,
   makeMidiNoteSequenceStutterTLibrary,
+  makeArpTLibrary,
   tLibraryMap,
   DelayAcrossTracks,
 }
