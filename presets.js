@@ -11,6 +11,11 @@ const zebraletteCPop2FxpB64 = fs.readFileSync(zebraletteCPop2Filename).toString(
 const zebraletteCMonoFilename = path.join(__dirname, 'presets', 'zebralette-cmono.FXP')
 const zebraletteCMonoFxpB64 = fs.readFileSync(zebraletteCMonoFilename).toString('base64')
 
+const dfHallLong = path.join(__dirname, 'presets', 'dfhall-long.FXP')
+const dfHallLongFxpB64 = fs.readFileSync(dfHallLong)
+const dfHallShort = path.join(__dirname, 'presets', 'dfhall-short.FXP')
+const dfHallShortFxpB64 = fs.readFileSync(dfHallShort)
+
 module.exports = {
   zebralette: {
     /** @param args {import('fluid-music').plugins.ZebraletteVst2Parameters} */
@@ -31,6 +36,19 @@ module.exports = {
       zebralette.vst2.presetBase64 = zebraletteCMonoFxpB64
       if (params) zebralette.parameters = params
       return zebralette
+    },
+  },
+
+  dragonflyHall: {
+    long(params) {
+      const plugin = new plugins.DragonflyHallVst2(params)
+      plugin.vst2.presetBase64 = dfHallLongFxpB64
+      return plugin
+    },
+    short(params) {
+      const plugin  = new plugins.DragonflyHallVst2(params)
+      plugin.vst2.presetBase64 = dfHallShortFxpB64
+      return plugin
     },
   }
 }
