@@ -299,6 +299,7 @@ class Arpeggiator {
     const stepDuration = (originalDuration / this.iterations)
     const stepDurationSeconds = (originalDurationSeconds / this.iterations)
     const clipFraction = (context.startTime - context.clip.startTime) / context.clip.duration
+    const initialIntensity = typeof context.d.intensity === 'number' ? context.d.intensity : 1
 
     for (let i = 0; i < this.iterations; i++) {
       const technique = this.notes[i % this.notes.length]
@@ -307,7 +308,8 @@ class Arpeggiator {
       context.startTimeSeconds = originalStartTimeSeconds + i + stepDurationSeconds
       context.duration = stepDuration + durationDelta
       context.durationSeconds = stepDurationSeconds + durationDeltaSeconds
-      context.d.intensity = (1-fraction) * (1-clipFraction)
+      context.d = { ...context.d }
+      context.d.intensity = (1-fraction) * (1-clipFraction) * initialIntensity
       technique.use(context)
     }
   }
