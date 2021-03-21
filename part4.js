@@ -4,7 +4,20 @@ const tr808 = require('@fluid-music/tr-808')
 const rides = require('@fluid-music/rides')
 
 // local packages
-const { Arpeggiator, DelaysOnOtherTracks, Stutter, StutterSoftOddEvents, StutterRampIntensityDown, Sequence, makeMidiNoteSequenceStutterTLibrary, tLibraryMap, DelayAcrossTracks, makeArpTLibrary, makeArpScore } = require('./techniques')
+const {
+  Arpeggiator,
+  ArrayToOtherTracks,
+  DelaysOnOtherTracks,
+  Stutter,
+  StutterSoftOddEvents,
+  StutterRampIntensityDown,
+  Sequence,
+  makeMidiNoteSequenceStutterTLibrary,
+  tLibraryMap,
+  DelayAcrossTracks,
+  makeArpTLibrary,
+  makeArpScore } = require('./techniques')
+
 const { zebralette } = require('./presets')
 const { dLibrary } = require('./d-library')
 const { MidiNote, PluginAutomationRamp } = require('fluid-music/built/techniques')
@@ -67,10 +80,10 @@ const session = new FluidSession({ bpm, dLibrary }, [
   ] },
   { name: 'arps', plugins: [new fluid.plugins.RoughRider3Vst2({ externalSidechainEnable: 1 }).sidechainWith('bass')], children: [
     { name: 'arp', plugins: [zebralette.cMono()] },
-    { name: 'arpD1', gainDb: -8, pan: -.5, plugins: [zebralette.cMono()] },
-    { name: 'arpD2', gainDb: -8, pan: 0.5, plugins: [zebralette.cMono()] },
-    { name: 'arpD3', gainDb: -8, pan: -1., plugins: [zebralette.cMono()] },
-    { name: 'arpD4', gainDb: -8, pan: 1.0, plugins: [zebralette.cMono()] },
+    { name: 'arp1', gainDb: -8, pan: -.5, plugins: [zebralette.cMono()] },
+    { name: 'arp2', gainDb: -8, pan: 0.5, plugins: [zebralette.cMono()] },
+    { name: 'arp3', gainDb: -8, pan: -1., plugins: [zebralette.cMono()] },
+    { name: 'arp4', gainDb: -8, pan: 1.0, plugins: [zebralette.cMono()] },
   ]},
   { name: 'bass', tLibrary: tr808.bass, tLibrary: tLibraryBass },
   { name: 'verb', plugins: [ new fluid.plugins.DragonflyHallVst2({ lateLevelPercent: 100, sizeMeters: 10 })] },
@@ -94,6 +107,15 @@ session.insertScore([
     p2:     ['b       ', '  f-  b- ', ' j--     '],
     p3:     ['c       ', '  g-  c- ', ' k--     '],
     p4:     ['d       ', '  h-  d- ', ' l--     '],
+  }, {
+    tLibrary: {
+      0: new ArrayToOtherTracks([0, 0, 0, 0].map(n => new techniques.PluginAutomationRamp(fluid.plugins.ZebraletteVst2.makeAutomation.osc1Tune(n)))),
+      a: new ArrayToOtherTracks([0, 7, 14, 2].map(n => new techniques.PluginAutomationRamp(fluid.plugins.ZebraletteVst2.makeAutomation.osc1Tune(n)))),
+      n: new ArrayToOtherTracks([60, 60, 60, 60].map(n => new techniques.MidiNote(n))),
+    },
+    r: '1 2 3 4 1 2 3 4',
+    p: '0   a   0   a  ',
+    n: 'n--------------',
   }, {
     arp: [
       {

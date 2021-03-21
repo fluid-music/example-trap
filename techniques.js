@@ -1,7 +1,6 @@
 const fluid = require('fluid-music')
-const { note } = require('fluid-music/built/cybr/midiclip')
 const { MidiNote, MidiChord } = require('fluid-music/built/techniques')
-const { techniques, FluidAudioFile } = fluid
+const { techniques } = fluid
 
 class Stutter {
   /**
@@ -179,7 +178,7 @@ function makeArpTLibrary(root, intervals, ...delays) {
         context.duration += 0.005
         noteTechnique.use(context)
         for (const [i, delay] of delays.entries()) {
-          const trackName = context.track.name+'D'+(parseInt(i)+1)
+          const trackName = context.track.name+(parseInt(i)+1)
           const onOtherTrack = new OnOtherTrack(trackName, noteTechnique)
           const nudged = new techniques.Nudge(delay, onOtherTrack)
           nudged.use(context)
@@ -224,11 +223,24 @@ class DelaysOnOtherTracks {
     this.technique.use(context)
     for (let i = 0; i < this.delays.length; i++) {
       const delay = this.delays[i]
-      const trackName = context.track.name+'D'+(i+1)
+      const trackName = context.track.name+(i+1)
       const nudged = new techniques.Nudge(delay, this.technique)
       const onOtherTrack = new OnOtherTrack(trackName, nudged)
       
       onOtherTrack.use(context)
+    }
+  }
+}
+
+class ArrayToOtherTracks {
+  constructor(techniques) {
+    this.techniques = techniques
+  }
+  use(context) {
+    for (let i = 0; i < this.techniques.length; i++) {
+      const trackName = context.track.name + (i+1)
+      const technique = new OnOtherTrack(trackName, this.techniques[i])
+      technique.use(context)
     }
   }
 }
@@ -303,6 +315,7 @@ class Arpeggiator {
 
 module.exports = {
   Arpeggiator,
+  ArrayToOtherTracks,
   Stutter,
   StutterSoftOddEvents,
   StutterRampIntensityDown,
