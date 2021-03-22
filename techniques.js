@@ -5,7 +5,7 @@ const { techniques } = fluid
 class Stutter {
   /**
    * @param {number} subdivisions how many times to re-trigger the technique
-   * @param {import('fluid-music').Technique} technique 
+   * @param {import('fluid-music').Technique} technique
    */
   constructor(subdivisions, technique) {
     this.subTechnique = technique
@@ -13,7 +13,7 @@ class Stutter {
   }
 
   /**
-   * @param {import('fluid-music').UseContext} context 
+   * @param {import('fluid-music').UseContext} context
    */
   use(context) {
     const original = context
@@ -24,7 +24,7 @@ class Stutter {
 
     if (!context.data.stutter) context.data.stutter = {}
     context.data.stutter.subdivisions = this.subdivisions
-    
+
     let flip = false
     for (let i = 0; i < this.subdivisions; i++) {
       context.data.stutter.i = i
@@ -76,7 +76,7 @@ class StutterRampIntensityDown extends Stutter {
 /**
  * Each time this technique is used in a pattern, it will rotate through the
  * supplied techniques in order. It will reset to the first technique at the
- * beginning of each pattern string. 
+ * beginning of each pattern string.
  */
 class Sequence {
   constructor(techniques) {
@@ -145,7 +145,7 @@ function tLibraryMap(tLib, func) {
 
 /**
  * Use the supplied technique across child tracks. Use with Sequence to put
- * something slightly different on each track. 
+ * something slightly different on each track.
  */
 class DelayAcrossTracks {
   constructor(delayWholeNotes, technique, parentTrack, callLimit) {
@@ -169,7 +169,7 @@ function makeArpTLibrary(root, intervals, ...delays) {
   const tLibrary = {}
   const noteTechniques = intervals.map(interval => new techniques.MidiNote({ note: root + interval }))
 
-  // for (const [i, noteTechnique] of Object.entries(noteTechniques)) 
+  // for (const [i, noteTechnique] of Object.entries(noteTechniques))
   noteTechniques.forEach((noteTechnique, i) => {
     noteTechnique = new DecreasingIntensity(noteTechnique, 0.8)
     tLibrary[i] = {
@@ -226,7 +226,7 @@ class DelaysOnOtherTracks {
       const trackName = context.track.name+(i+1)
       const nudged = new techniques.Nudge(delay, this.technique)
       const onOtherTrack = new OnOtherTrack(trackName, nudged)
-      
+
       onOtherTrack.use(context)
     }
   }
@@ -245,7 +245,7 @@ class ArrayToOtherTracks {
   }
 }
 
-class DecreasingIntensity { 
+class DecreasingIntensity {
   constructor(technique, maxIntensity = 1) {
     this.technique = technique
     this.maxIntensity = maxIntensity
@@ -303,6 +303,7 @@ class Arpeggiator {
 
     for (let i = 0; i < this.iterations; i++) {
       const technique = this.notes[i % this.notes.length]
+      if (technique === null || technique === undefined || technique === false || technique === NaN) continue
       const fraction = i / this.iterations
       context.startTime = originalStartTime + i * stepDuration
       context.startTimeSeconds = originalStartTimeSeconds + i + stepDurationSeconds

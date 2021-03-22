@@ -3,26 +3,27 @@ const fluid = require('fluid-music')
 const { dragonflyHall } = require('./presets')
 const { makeGlissTracks, makeArpTracks } = require('./components')
 
-const bpm = 75
+const bpm = 58
 const session = new fluid.FluidSession({ bpm }, [
   makeArpTracks(bpm),
   makeGlissTracks(),
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
-  { name: 'verbShort', plugins: [dragonflyHall.short()] },
+  { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
 ])
-session.getOrCreateTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp'), -12)
+session.getTrackByName('verbShort').addReceiveFrom(session.getTrackByName('arps'), -30)
+session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('gliss'), -18)
 
 
 session.insertScore({
-  r: '1234',
-  d: '7888',
-  arp: 'A B ',
+  r: '12341234',
+  d: '7       ',
+  arp: ['AABBCCDD', ''],
 })
 
 session.insertScore({
-  r: '1 2 3 4 ',
-  n: 'n-------',
-  p: 'a---   0',
+  r: '1 2 3 4 1 2 3 4 ',
+  n: 'n---------------',
+  p: 'b-- a-- b--   0 ',
 })
 
 session.editCursorTime = 0
