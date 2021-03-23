@@ -275,12 +275,11 @@ function makeArpScore(root, intervals, delays) {
 
 class Arpeggiator {
   /**
-   * @param iterations the number of times to repeat this technique
    * @param midiChordOrNotes can be a MidiChord, or an array. If it is an array,
    * it must may contain a combination of midi note numbers and techniques
    */
-  constructor(iterations, midiChordOrNotes) {
-    this.iterations = (typeof iterations === 'number') ? iterations : 5
+  constructor(midiChordOrNotes) {
+    this.iterations = midiChordOrNotes.length
 
     if (midiChordOrNotes instanceof MidiChord) this.notes = midiChordOrNotes.notes.map(n => MidiNote(n))
     else if (Array.isArray(midiChordOrNotes)) this.notes = midiChordOrNotes.map(n => typeof n === 'number' ? new MidiNote(n) : n)
@@ -367,6 +366,23 @@ class MidiScale {
     }
     return { use }
   }
+
+  midiChordToDegreeArray(midiChord) {
+    const inputNotesArray = (midiChord instanceof MidiChord) ? midiChord.notes : midiChord
+    const degrees = []
+    for (const note of inputNotesArray) {
+      const foundDegree = { note }
+      for (let degree = 0; degree < this.notes.length; degree++) {
+        const checkNote = this.notes[degree]
+        if (checkNote === note) {
+          foundDegree.degree = degree
+          break
+        }
+      }
+      degrees.push(foundDegree)
+    }
+    return degrees
+  }
 }
 
 module.exports = {
@@ -383,7 +399,6 @@ module.exports = {
   DelaysOnOtherTracks,
   makeArpScore,
   makeMidiNoteSequence,
-  makeMidiNoteSequenceStutterTLibrary,
   makeArpTLibrary,
   tLibraryMap,
   DelayAcrossTracks,

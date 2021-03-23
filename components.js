@@ -56,11 +56,29 @@ function makeArp6TLibrary(bpm, delta1 = 0, delta2 = 0) {
   const delay2 = delay * 1.04
   const scale = new MidiScale(52, [delay1, delay2], [delta1, delta2])
   return {
-    a: new Arpeggiator(6, [2, 8, 9, 10, 11, null].map(n => (n !== null) && scale.makeTechnique(n))),
-    b: new Arpeggiator(6, [2, 8, 9, 11, 13, null].map(n => (n !== null) && scale.makeTechnique(n))),
-    c: new Arpeggiator(6, [1, 2, 8, 9, 11, null].map(n => (n !== null) && scale.makeTechnique(n))),
-    d: new Arpeggiator(6, [1, 2, 8, 9, 11, 13].map(n => (n !== null) && scale.makeTechnique(n))),
+    a: new Arpeggiator([2, 8, 9, 10, 11, null].map(n => (n !== null) && scale.makeTechnique(n))),
+    b: new Arpeggiator([2, 8, 9, 11, 13, null].map(n => (n !== null) && scale.makeTechnique(n))),
+    c: new Arpeggiator([1, 2, 8, 9, 11, null].map(n => (n !== null) && scale.makeTechnique(n))),
+    d: new Arpeggiator([1, 2, 8, 9, 11, 13].map(n => (n !== null) && scale.makeTechnique(n))),
   }
+}
+
+function makeArp6TLibraryFromMidiChords(bpm, delta1, delta2, forceSize, midiChords) {
+  const quarterNote = 1 / bpm * 60
+  const delay = quarterNote * 2/6
+  const delay1 = delay * 0.96
+  const delay2 = delay * 1.04
+  const scale = new MidiScale(52, [delay1, delay2], [delta1, delta2])
+  return fluid.tLibrary.fromArray(midiChords.map(chord => {
+    let degrees = scale.midiChordToDegreeArray(chord)
+    if (typeof forceSize === 'number') {
+      const oldDegrees = degrees
+      degrees = new Array(forceSize).fill(null).map((n, i) => {
+        return (i < oldDegrees.length) ? oldDegrees[i] : null
+      })
+    }
+    return new Arpeggiator(degrees.map(n => (n && n.hasOwnProperty('degree')) && scale.makeTechnique(n.degree)))
+  }))
 }
 
 
@@ -84,6 +102,7 @@ function makeArp6Tracks(bpm) {
 
 module.exports = {
   makeArp6TLibrary,
+  makeArp6TLibraryFromMidiChords,
   makeGlissTracks,
   makeArp6Tracks,
 }
