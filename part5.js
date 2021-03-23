@@ -1,7 +1,7 @@
 const fluid = require('fluid-music')
 
 const { dragonflyHall } = require('./presets')
-const { makeGlissTracks, makeArp6Tracks, makeArp6TLibrary, makeArp6TLibrary2 } = require('./components')
+const { makeGlissTracks, makeArp6Tracks, makeArp6TLibrary } = require('./components')
 
 const bpm = 58
 const session = new fluid.FluidSession({ bpm }, [
@@ -15,24 +15,18 @@ const session = new fluid.FluidSession({ bpm }, [
 
 
 session.insertScore({
-  tLibrary: makeArp6TLibrary2(bpm),
-  r:    '1.....2.....3.....4',
-  d:    '76543 65432 ',
-  arp6: [ {r: '1234', arp6: 'A'}],
-}).insertScore({
-  r: '12341234',
-  d: '7   8   ',
-  arp6: ['aabbccdd'],
-}).insertScore({
-  tLibrary: fluid.tLibrary.fromArray([
-    [0, 7, 9, null],
-    [-1, 0, 12, null],
-    [-1, 0, 7, null],
-    [-1, 0, 7, 9],
-  ].map(intervals => makeArp6TLibrary(bpm, 60, intervals))),
+  tLibrary: makeArp6TLibrary(bpm, 0, 0),
   r:    '12341234',
-  arp6: 'abbccdd',
+  arp6: ['aabbccdd'],
 })
+
+session.insertScore({
+  tLibrary: makeArp6TLibrary(bpm, 2, 4),
+  r:    '12341234',
+  arp6: ['aabbccdd'],
+})
+
+session.insertScore({r: '1234', arp6: ''})
 
 session.insertScore({
   r: '1 2 3 4 1 2 3 4 ',

@@ -49,47 +49,17 @@ function makeGlissTracks() {
   return glissandoTrack
 }
 
-function makeArp6TLibrary(bpm, rootNumber, intervals) {
+function makeArp6TLibrary(bpm, delta1 = 0, delta2 = 0) {
   const quarterNote = 1 / bpm * 60
   const delay = quarterNote * 2/6
   const delay1 = delay * 0.96
   const delay2 = delay * 1.04
-  return new DelaysOnOtherTracks([delay1, delay2], new Arpeggiator(6, intervals.map(n => (typeof n === 'number') && new techniques.MidiNote(n+rootNumber))))
-}
-
-function makeArp6ScaleLibrary(bpm, rootNumber, scaleDegrees) {
-  const quarterNote = 1 / bpm * 60
-  const delay = quarterNote * 2/6
-  const delay1 = delay * 0.96
-  const delay2 = delay * 1.04
+  const scale = new MidiScale(52, [delay1, delay2], [delta1, delta2])
   return {
-    a: new Multiple(
-      new MidiScaleDegree(0),
-      new OnOtherTrack('arp61', new techniques.Nudge(delay1, new MidiScaleDegree(5))),
-      new OnOtherTrack('arp62', new techniques.Nudge(delay2, new MidiScaleDegree(7))),
-    ),
-    b: new Multiple(
-      new MidiScaleDegree(1),
-      new OnOtherTrack('arp61', new techniques.Nudge(delay1, new MidiScaleDegree(6))),
-      new OnOtherTrack('arp62', new techniques.Nudge(delay2, new MidiScaleDegree(8))),
-    ),
-  }
-}
-
-function makeArp6TLibrary2(bpm) {
-  const quarterNote = 1 / bpm * 60
-  const delay = quarterNote * 2/6
-  const delay1 = delay * 0.96
-  const delay2 = delay * 1.04
-  const scale = new MidiScale(52, [delay1, delay2])
-  return {
-    a: scale.makeTechnique(2),
-    b: scale.makeTechnique(8),
-    c: scale.makeTechnique(9),
-    d: scale.makeTechnique(10),
-    e: scale.makeTechnique(11),
-    f: scale.makeTechnique(1),
-    A: new Arpeggiator(6, [1, 2, 3, 4, 5, 6].map(n => scale.makeTechnique(n)))
+    a: new Arpeggiator(6, [2, 8, 9, 10, 11, null].map(n => (n !== null) && scale.makeTechnique(n))),
+    b: new Arpeggiator(6, [2, 8, 9, 11, 13, null].map(n => (n !== null) && scale.makeTechnique(n))),
+    c: new Arpeggiator(6, [1, 2, 8, 9, 11, null].map(n => (n !== null) && scale.makeTechnique(n))),
+    d: new Arpeggiator(6, [1, 2, 8, 9, 11, 13].map(n => (n !== null) && scale.makeTechnique(n))),
   }
 }
 
@@ -114,8 +84,6 @@ function makeArp6Tracks(bpm) {
 
 module.exports = {
   makeArp6TLibrary,
-  makeArp6TLibrary2,
-  makeArp6ScaleLibrary,
   makeGlissTracks,
   makeArp6Tracks,
 }
