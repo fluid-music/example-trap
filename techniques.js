@@ -1,6 +1,7 @@
 const fluid = require('fluid-music')
-const { MidiNote, MidiChord } = require('fluid-music/built/techniques')
-const { techniques } = fluid
+const { MidiNote, MidiChord } = fluid.techniques
+const { techniques, converters } = fluid
+const { range } = converters
 
 class Stutter {
   /**
@@ -316,9 +317,64 @@ class Arpeggiator {
   }
 }
 
+class MidiTranspose {
+  constructor(amount, techniqueOrNote) {
+    if (typeof techniqueOrNote === 'number') {
+      this.technique = new MidiNote(techniqueOrNote + amount)
+    } else if (techniqueOrNote instanceof MidiNote) {
+      this.technique = new MidiNote(techniqueOrNote)
+      this.technique.note += amount
+    }
+  }
+  use(context) {
+    this.technique.use(context)
+  }
+}
+
+class Multiple {
+  constructor(...techniques){
+    this.techniques = techniques
+  }
+  use(context) {
+    for (const tech of this.techniques) tech.use(context)
+  }
+}
+
+class MidiScale {
+  constructor(root = 57, delays, deltas) {
+    this.notes = range(5).map(i => [0, 2, 3, 5, 7, 8, 10].map(n => (root + n + i * 12) % 128)).flat()
+    this.deltas = deltas || new Array(delays.length).fill(0)
+    this.delays = delays
+
+  }
+
+  makeTechnique(degree) {
+    /**
+     * @param {import('fluid-music').UseContext} context
+     */
+    const use = (context) => {
+      const mainNoteNumber = this.notes[degree]
+      const mainNote = new techniques.MidiNote(mainNoteNumber)
+      mainNote.use(context)
+      for (let i = 0; i < this.delays.length; i ++) {
+        const delay = this.delays[i]
+        const noteNumber = this.notes[degree + (this.deltas[i] || 0)]
+        const midiNote = new techniques.MidiNote(noteNumber)
+        const onOtherTrack = new OnOtherTrack(context.track.name + (i+1), midiNote)
+        const nudged = new techniques.Nudge(delay, onOtherTrack)
+        nudged.use(context)
+      }
+    }
+    return { use }
+  }
+}
+
 module.exports = {
+  MidiScale,
   Arpeggiator,
   ArrayToOtherTracks,
+  MidiTranspose,
+  Multiple,
   Stutter,
   StutterSoftOddEvents,
   StutterRampIntensityDown,

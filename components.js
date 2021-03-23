@@ -1,10 +1,14 @@
 const fluid = require('fluid-music')
-const { techniques, FluidSession } = fluid
+const { techniques, FluidSession, converters } = fluid
+
 const dLibrary = require('./d-library').dLibrary
 const {
   Arpeggiator,
   ArrayToOtherTracks,
   DelaysOnOtherTracks,
+  Multiple,
+  MidiTranspose,
+  MidiScale,
   Stutter,
   StutterSoftOddEvents,
   StutterRampIntensityDown,
@@ -13,7 +17,8 @@ const {
   tLibraryMap,
   DelayAcrossTracks,
   makeArpTLibrary,
-  makeArpScore } = require('./techniques')
+  makeArpScore,
+  OnOtherTrack} = require('./techniques')
 
 const { zebralette } = require('./presets')
 
@@ -44,32 +49,73 @@ function makeGlissTracks() {
   return glissandoTrack
 }
 
-
-function makeArpTracks(bpm) {
-
+function makeArp6TLibrary(bpm, rootNumber, intervals) {
   const quarterNote = 1 / bpm * 60
   const delay = quarterNote * 2/6
   const delay1 = delay * 0.96
   const delay2 = delay * 1.04
+  return new DelaysOnOtherTracks([delay1, delay2], new Arpeggiator(6, intervals.map(n => (typeof n === 'number') && new techniques.MidiNote(n+rootNumber))))
+}
 
-  const arpTrack = { name: 'arps', plugins: [], dLibrary, children: [
-    { name: 'arp', plugins: [zebralette.cMono()], tLibrary: {
-      A: new DelaysOnOtherTracks([delay1, delay2], new Arpeggiator(6, [0, 11, 12, 14, 16, null].map(n => (typeof n === 'number') && new techniques.MidiNote(n + 55)))),
-      B: new DelaysOnOtherTracks([delay1, delay2], new Arpeggiator(6, [0, 11, 12, 16, 19, null].map(n => (typeof n === 'number') && new techniques.MidiNote(n + 55)))),
-      C: new DelaysOnOtherTracks([delay1, delay2], new Arpeggiator(6, [-1, 0, 11, 12, 16, null].map(n => (typeof n === 'number') && new techniques.MidiNote(n + 55)))),
-      D: new DelaysOnOtherTracks([delay1, delay2], new Arpeggiator(6, [-1, 0, 11, 12, 16, 19].map(n => (typeof n === 'number') && new techniques.MidiNote(n + 55)))),
-    } },
-    { name: 'arp1', gainDb: -8, pan: -.5, plugins: [zebralette.cMono()] },
-    { name: 'arp2', gainDb: -8, pan: 0.5, plugins: [zebralette.cMono()] },
-    { name: 'arp3', gainDb: -8, pan: -1., plugins: [zebralette.cMono()] },
-    { name: 'arp4', gainDb: -8, pan: 1.0, plugins: [zebralette.cMono()] },
-  ] }
+function makeArp6ScaleLibrary(bpm, rootNumber, scaleDegrees) {
+  const quarterNote = 1 / bpm * 60
+  const delay = quarterNote * 2/6
+  const delay1 = delay * 0.96
+  const delay2 = delay * 1.04
+  return {
+    a: new Multiple(
+      new MidiScaleDegree(0),
+      new OnOtherTrack('arp61', new techniques.Nudge(delay1, new MidiScaleDegree(5))),
+      new OnOtherTrack('arp62', new techniques.Nudge(delay2, new MidiScaleDegree(7))),
+    ),
+    b: new Multiple(
+      new MidiScaleDegree(1),
+      new OnOtherTrack('arp61', new techniques.Nudge(delay1, new MidiScaleDegree(6))),
+      new OnOtherTrack('arp62', new techniques.Nudge(delay2, new MidiScaleDegree(8))),
+    ),
+  }
+}
+
+function makeArp6TLibrary2(bpm) {
+  const quarterNote = 1 / bpm * 60
+  const delay = quarterNote * 2/6
+  const delay1 = delay * 0.96
+  const delay2 = delay * 1.04
+  const scale = new MidiScale(52, [delay1, delay2])
+  return {
+    a: scale.makeTechnique(2),
+    b: scale.makeTechnique(8),
+    c: scale.makeTechnique(9),
+    d: scale.makeTechnique(10),
+    e: scale.makeTechnique(11),
+    f: scale.makeTechnique(1),
+    A: new Arpeggiator(6, [1, 2, 3, 4, 5, 6].map(n => scale.makeTechnique(n)))
+  }
+}
+
+
+function makeArp6Tracks(bpm) {
+  const arpTrack = { name: 'arp', dLibrary, children: [
+    { name: 'arp6', plugins: [zebralette.cMono()], tLibrary: fluid.tLibrary.fromArray([
+      [0, 11, 12, 14, 16, null],
+      [0, 11, 12, 16, 19, null],
+      [-1, 0, 11, 12, 16, null],
+      [-1, 0, 11, 12, 16, 19],
+    ].map((intervals) => makeArp6TLibrary(bpm, 55, intervals)))},
+    { name: 'arp61', gainDb: -8, pan: -.5, plugins: [zebralette.cMono()] },
+    { name: 'arp62', gainDb: -8, pan: 0.5, plugins: [zebralette.cMono()] },
+    { name: 'arp63', gainDb: -8, pan: -1., plugins: [zebralette.cMono()] },
+    { name: 'arp64', gainDb: -8, pan: 1.0, plugins: [zebralette.cMono()] },
+  ]}
 
   return arpTrack
 }
 
 
 module.exports = {
+  makeArp6TLibrary,
+  makeArp6TLibrary2,
+  makeArp6ScaleLibrary,
   makeGlissTracks,
-  makeArpTracks,
+  makeArp6Tracks,
 }
