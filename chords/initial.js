@@ -38,12 +38,12 @@ const chords = [
     name: 'GM9/Gb',
     notes: [54, 55, 59, 62, 67, 69, 71],
   }),
-  /** h */
+
   new MidiChord({
     name: 'Dsus413',
     notes: [50, 57, 62, 64, 67, 71, 72],
   }),
-  /** i */
+
   new MidiChord({
     name: 'Gadd11/D',
     notes: [50, 55, 60, 62, 67, 71, 72],

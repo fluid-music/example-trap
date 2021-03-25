@@ -42,7 +42,7 @@ function makeGlissTracks() {
     { name: 'p3', pan: 0.123, plugins: [zebralette.cPop2({ osc1Tune: 0, env1ReleasePercent: 70 })], children: [
       { name: 'n3' }
     ] },
-    { name: 'p4', pan: 0.5 ,plugins: [zebralette.cPop2({ osc1Tune: 0, env1ReleasePercent: 70 })], children: [
+    { name: 'p4', pan: 0.5, plugins: [zebralette.cPop2({ osc1Tune: 0, env1ReleasePercent: 70 })], children: [
       { name: 'n4' }
     ] },
   ] }
@@ -63,12 +63,9 @@ function makeArp6TLibrary(bpm, delta1 = 0, delta2 = 0) {
   }
 }
 
-function makeArp6TLibraryFromMidiChords(bpm, delta1, delta2, forceSize, midiChords) {
-  const quarterNote = 1 / bpm * 60
-  const delay = quarterNote * 2/6
-  const delay1 = delay * 0.96
-  const delay2 = delay * 1.04
-  const scale = new MidiScale(52, [delay1, delay2], [delta1, delta2])
+function makeArp6TLibraryFromMidiChords(delayArray, degreeDeltaArray, forceSize, midiChords) {
+
+  const scale = new MidiScale(52, delayArray, degreeDeltaArray)
   return fluid.tLibrary.fromArray(midiChords.map(chord => {
     let degrees = scale.midiChordToDegreeArray(chord)
     if (typeof forceSize === 'number') {
@@ -92,8 +89,10 @@ function makeArp6Tracks(bpm) {
     ].map((intervals) => makeArp6TLibrary(bpm, 55, intervals)))},
     { name: 'arp61', gainDb: -8, pan: -.5, plugins: [zebralette.cMono()] },
     { name: 'arp62', gainDb: -8, pan: 0.5, plugins: [zebralette.cMono()] },
-    { name: 'arp63', gainDb: -8, pan: -1., plugins: [zebralette.cMono()] },
-    { name: 'arp64', gainDb: -8, pan: 1.0, plugins: [zebralette.cMono()] },
+    { name: 'arp63', gainDb: -9, pan: -.5, plugins: [zebralette.cMono()] },
+    { name: 'arp64', gainDb: -9, pan: 0.5, plugins: [zebralette.cMono()] },
+    { name: 'arp65', gainDb: -10, pan: -.5, plugins: [zebralette.cMono()] },
+    { name: 'arp66', gainDb: -10, pan: 0.5, plugins: [zebralette.cMono()] },
   ]}
 
   return arpTrack
