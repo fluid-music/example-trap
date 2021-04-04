@@ -395,12 +395,12 @@ class MidiScale {
 
   midiChordToDegreeArray(midiChord) {
     const inputNotesArray = (midiChord instanceof MidiChord) ? midiChord.notes : midiChord
-    const degrees = [] // { note : number, degree? : number}
+    const degrees = [] // { note : number, degree: number|null }
     for (const note of inputNotesArray) {
-      const foundDegree = { note }
-      const degree = this.midiNoteNumberToDegree(note)
-      if (typeof degree === 'number') foundDegree.degree = degree
-      degrees.push(foundDegree)
+      degrees.push({
+        note,
+        degree: this.midiNoteNumberToDegree(note),
+      })
     }
     return degrees
   }
