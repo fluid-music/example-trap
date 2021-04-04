@@ -1,5 +1,5 @@
 const fluid = require('fluid-music')
-
+const dLibrary = require('./d-library').dLibrary
 const { dragonflyHall } = require('./presets')
 const { makeGlissTracks, makeArp6Tracks, makeArp6TLibrary, makeArp6TLibraryFromMidiChords } = require('./components')
 
@@ -12,7 +12,7 @@ const delays27 = [delay27 * 0.96, delay27 * 1.04]
 const delaysAlpha = [quarterNote / 2, quarterNote]
 const delay7 = quarterNote / 7
 
-const session = new fluid.FluidSession({ bpm }, [
+const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
   makeGlissTracks(),
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
@@ -24,20 +24,31 @@ session.getTrackByName('verbShort').addReceiveFrom(session.getTrackByName('arp6'
 
 session.insertScore({
   tLibrary: makeArp6TLibrary(bpm, 0, 0),
-  r:    '12341234',
-  arp6: ['aabbccdd'],
+  r:     '123123',
+  arp6: ['abdcd'],
 })
 
 session.insertScore({
   tLibrary: makeArp6TLibrary(bpm, 2, 4),
-  r:    '12341234',
-  arp6: ['aabbccdd'],
+  r:     '123123',
+  arp6: ['abdcd'],
+})
+
+session.insertScore({
+  tLibrary: makeArp6TLibrary(bpm, 7, 7),
+  r:     '123123',
+  arp6: ['abdcd'],
+})
+session.insertScore({
+  tLibrary: makeArp6TLibrary(bpm, 1, 2),
+  r:     '123123',
+  arp6: ['abdcd'],
 })
 
 session.insertScore({
   tLibrary: makeArp6TLibrary(bpm, 0, 4),
   r:    '1..2.....3........4..',
-  arp6: 'a  b     c        abc',
+  arp6: 'a  b     d        abc',
 })
 
 session.insertScore({
@@ -48,15 +59,30 @@ session.insertScore({
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8, delay7 * 10], [2, -1, 6, 3, 10], null, require('./chords/initial')),
-  r:    '1 2 3 4 1 2 3 4 ',
-  arp6: 'f  g  h  i',
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
+  arp6: 'a  b  c  d  f  g  h  i  ',
+})
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8, delay7 * 10], [7, -7, 2, 3], null, require('./chords/initial')),
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
+  arp6: 'a  b  c  d  f  g  h  i  ',
 })
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords(delays13, [0, 0], 6, require('./chords/initial')),
   r:    '1 2 3 4 1 2 3 4 ',
-  arp6: 'f g h i f-g-h-i-',
+  arp6: '        f-g-h-i-',
 })
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords(delays13, [0, 0], 12, require('./chords/initial')),
+  r:    'w . . . w . . . w . . .',
+  arp6: 'f--h--i--f---h---i---',
+})
+
 
 session.insertScore({r: '1234', arp6: ''})
 

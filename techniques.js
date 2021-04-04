@@ -340,11 +340,26 @@ class Multiple {
 }
 
 class MidiScale {
+  /**
+   * @param {number} root the MIDI note number that will be implied by degree = 0
+   */
   constructor(root = 57, delays, deltas) {
-    this.notes = range(5).map(i => [0, 2, 3, 5, 7, 8, 10].map(n => (root + n + i * 12) % 128)).flat()
-    this.deltas = deltas || new Array(delays.length).fill(0)
+    this.rootMidiNoteNumber = root
+    this.scaleIntervals = [0, 2, 3, 5, 7, 8, 10] // minor scale
+    this.scaleSize = 12 // intervals in an octave
+    // this.notes = range(13).map(i => this.scaleIntervals.map(n => (n + i * this.scaleSize) % 128)).flat()
     this.delays = delays
+    this.deltas = deltas || new Array(this.delays.length).fill(0)
+  }
 
+  degreeToMidiNoteNumber(degree) {
+    const octave = Math.floor(degree / this.scaleIntervals.length)
+    const degreeInOctave = (degree >= 0)
+      ? degree % this.scaleIntervals.length
+      : (degree + (Math.abs(Math.floor(degree / this.scaleIntervals.length)) * this.scaleIntervals.length)) % (this.scaleIntervals.length)
+
+    // Now treat octave and degreeInOctave as relative to the root MIDI number
+    return this.rootMidiNoteNumber + (octave * this.scaleSize) + this.scaleIntervals[degreeInOctave]
   }
 
   makeTechnique(degree) {
@@ -352,12 +367,12 @@ class MidiScale {
      * @param {import('fluid-music').UseContext} context
      */
     const use = (context) => {
-      const mainNoteNumber = this.notes[degree]
+      const mainNoteNumber = this.degreeToMidiNoteNumber(degree)
       const mainNote = new techniques.MidiNote(mainNoteNumber)
       mainNote.use(context)
       for (let i = 0; i < this.delays.length; i ++) {
         const delay = this.delays[i]
-        const noteNumber = this.notes[degree + (this.deltas[i] || 0)]
+        const noteNumber = this.degreeToMidiNoteNumber(degree + (this.deltas[i] || 0))
         const midiNote = new techniques.MidiNote(noteNumber)
         const onOtherTrack = new OnOtherTrack(context.track.name + (i+1), midiNote)
         const nudged = new techniques.Nudge(delay, onOtherTrack)
@@ -367,18 +382,24 @@ class MidiScale {
     return { use }
   }
 
+  midiNoteNumberToDegree(note) {
+    const octave = Math.floor((note - this.rootMidiNoteNumber) / this.scaleSize)
+    for (let degree = 0; degree < this.scaleIntervals.length; degree++) {
+      const checkNote = this.degreeToMidiNoteNumber(this.scaleIntervals.length * octave + degree)
+      if (checkNote === note) {
+        return degree + octave * this.scaleIntervals.length
+      }
+    }
+    return null
+  }
+
   midiChordToDegreeArray(midiChord) {
     const inputNotesArray = (midiChord instanceof MidiChord) ? midiChord.notes : midiChord
-    const degrees = []
+    const degrees = [] // { note : number, degree? : number}
     for (const note of inputNotesArray) {
       const foundDegree = { note }
-      for (let degree = 0; degree < this.notes.length; degree++) {
-        const checkNote = this.notes[degree]
-        if (checkNote === note) {
-          foundDegree.degree = degree
-          break
-        }
-      }
+      const degree = this.midiNoteNumberToDegree(note)
+      if (typeof degree === 'number') foundDegree.degree = degree
       degrees.push(foundDegree)
     }
     return degrees
