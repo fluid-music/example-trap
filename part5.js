@@ -1,10 +1,12 @@
 const fluid = require('fluid-music')
 const dLibrary = require('./d-library').dLibrary
+const kit = require('@fluid-music/kit')
 const { dragonflyHall } = require('./presets')
 const { makeGlissTracks, makeArp6Tracks, makeArp6TLibrary, makeArp6TLibraryFromMidiChords } = require('./components')
 
-const bpm = 58
+const bpm = 40
 const quarterNote = 1 / bpm * 60
+const delay8 = quarterNote / 2
 const delay13 = quarterNote * 2/6
 const delays13 = [delay13 * .96, delay13 * 1.04]
 const delay27 = quarterNote * 2/7
@@ -15,6 +17,10 @@ const delay7 = quarterNote / 7
 const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
   makeGlissTracks(),
+  { name: 'drums', tLibrary: kit.tLibrary, children: [
+    { name: 'kick' },
+    { name: 'snare' },
+  ]},
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
 ])
@@ -62,13 +68,27 @@ session.insertScore({
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
   arp6: 'a  b  c  d  f  g  h  i  ',
+  kick: 'D--D--D--D--D--D--D--D--',
 })
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8, delay7 * 10], [7, -7, 2, 3], null, require('./chords/initial')),
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
-  arp6: 'a  b  c  d  f  g  h  i  ',
+  arp6: 'c   d   f   g   h   i   ',
+})
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, require('./chords/seven-notes')),
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 ',
+  arp6: 'a   b   c   d   ',
+})
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8], [7, -7, 2, 3], null, require('./chords/seven-notes')),
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 ',
+  arp6: 'a   b   c   d   ',
 })
 
 session.insertScore({
