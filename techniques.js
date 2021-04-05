@@ -283,7 +283,7 @@ class Arpeggiator {
 
     if (midiChordOrNotes instanceof MidiChord) this.notes = midiChordOrNotes.notes.map(n => MidiNote(n))
     else if (Array.isArray(midiChordOrNotes)) this.notes = midiChordOrNotes.map(n => typeof n === 'number' ? new MidiNote(n) : n)
-    else throw new Error('Unexpected Arppegiator technique: ' + JSON.stringify(midiChordOrNotes))
+    else throw new Error('Unexpected Arpeggiator technique: ' + JSON.stringify(midiChordOrNotes))
   }
 
   /** @param {import('fluid-music').UseContext} context */
