@@ -88,12 +88,12 @@ function makeArp6Tracks(bpm) {
       [-1, 0, 11, 12, 16, null],
       [-1, 0, 11, 12, 16, 19],
     ].map((intervals) => makeArp6TLibrary(bpm, 55, intervals)))},
-    { name: 'arp61', gainDb: -8, pan: -.5, plugins: [zebralette.cMono()] },
-    { name: 'arp62', gainDb: -9, pan: 0.5, plugins: [zebralette.cMono()] },
-    { name: 'arp63', gainDb: -10, pan: -.5, plugins: [zebralette.cMono()] },
-    { name: 'arp64', gainDb: -11, pan: 0.5, plugins: [zebralette.cMono()] },
-    { name: 'arp65', gainDb: -12, pan: -.5, plugins: [zebralette.cMono()] },
-    { name: 'arp66', gainDb: -13, pan: 0.5, plugins: [zebralette.cMono()] },
+    { name: 'arp61', gainDb: -8, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 7 })] },
+    { name: 'arp62', gainDb: -9, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 8 })] },
+    { name: 'arp63', gainDb: -10, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    { name: 'arp64', gainDb: -11, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    { name: 'arp65', gainDb: -12, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    { name: 'arp66', gainDb: -13, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
   ]}
 
   return arpTrack

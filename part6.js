@@ -16,7 +16,6 @@ const delay7 = quarterNote / 7
 
 const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
-  makeGlissTracks(),
   { name: 'drums', tLibrary: kit.tLibrary, children: [
     { name: 'kick' },
     { name: 'snare' },
@@ -25,9 +24,16 @@ const session = new fluid.FluidSession({ bpm, dLibrary }, [
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
 ])
 session.getTrackByName('verbShort').addReceiveFrom(session.getTrackByName('arp6'))
-// session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('gliss'), -18)
+session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp64'), -17)
 
 
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, require('./chords/seven-notes')),
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
+  arp6: 'a       b     c   d     ',
+})
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, require('./chords/seven-notes')),
   d:    '7',
@@ -39,16 +45,6 @@ session.insertScore({
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 ',
   arp6: 'a   b   c   d   ',
-})
-
-
-
-session.insertScore({r: '1234', arp6: ''})
-
-session.insertScore({
-  r: '1 2 3 4 1 2 3 4 ',
-  n: 'n---------------',
-  p: 'b-- a-- b--   0 ',
 })
 
 session.editCursorTime = 0
