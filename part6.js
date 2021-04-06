@@ -18,7 +18,8 @@ const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
   { name: 'drums', tLibrary: kit.tLibrary, children: [
     { name: 'kick' },
-    { name: 'snare' },
+    { name: 'snare', gainDb: -4.5 },
+    { name: 'hat', gainDb: -6.5 },
   ]},
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
@@ -37,8 +38,8 @@ session.insertScore({
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, require('./chords/seven-notes')),
   d:    '7',
-  r:    '1 2 3 4 1 2 3 4 ',
-  arp6: 'a   b   c   d   ',
+  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
+  arp6: 'a    b    c    d        ',
 })
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, require('./chords/seven-notes')),
@@ -47,7 +48,39 @@ session.insertScore({
   arp6: 'a   b   c   d   ',
 })
 
-session.editCursorTime = 0
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, require('./chords/seven-notes')),
+  d:    '7',
+  r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......4......+......',
+  arp6: '              a------             b------             c------             d------   ',
+  drums: {
+  kick: '              D------              D------    d---    D------              D------    d---    ',
+  snare:'            ss       s------      s       s         ss       s------      s       s         ss',
+  hat: {
+  hat:  '               tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt',
+  d:    '               494847 494745 494745 494745 494745 494745 494847 494745 494745 494745 494745 494745',
+  },
+  tLibrary: kit.tLibrary,
+  }
+})
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, require('./chords/seven-notes')),
+  d:    '7',
+  r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
+  arp6: '              a------             b------             c------             d------   ',
+  drums: {
+  kick: '              D------                 d------         D------                 d------          ',
+  snare:'            ss        s------        s        s     ss        s------        s        s        ',
+  hat: {
+  hat:  '               ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt',
+  d:    '               4948474 4947454 4947454 4947454 4947454 4948474 4947454 4947454 4947454 4947454',
+  },
+  tLibrary: kit.tLibrary,
+  }
+})
+
+session.editCursorTime = 8
 session.finalize()
 session.saveAsReaperFile('part6')
   .then(() => console.log('done'))
