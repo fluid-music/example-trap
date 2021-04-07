@@ -16,10 +16,10 @@ const delay7 = quarterNote / 7
 
 const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
-  { name: 'drums', tLibrary: kit.tLibrary, children: [
+  { name: 'drums', gainDb: -4.4, tLibrary: kit.tLibrary, children: [
     { name: 'kick' },
-    { name: 'snare', gainDb: -4.5 },
-    { name: 'hat', gainDb: -6.5 },
+    { name: 'snare', gainDb: -6.7 },
+    { name: 'hat', gainDb: -9.7 },
   ]},
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
@@ -57,8 +57,8 @@ session.insertScore({
   kick: '              D------              D------    d---    D------              D------    d---    ',
   snare:'            ss       s------      s       s         ss       s------      s       s         ss',
   hat: {
-  hat:  '               tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt',
-  d:    '               494847 494745 494745 494745 494745 494745 494847 494745 494745 494745 494745 494745',
+  hat:  '               tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
+  d:    '               494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
   },
   tLibrary: kit.tLibrary,
   }
@@ -71,14 +71,14 @@ session.insertScore({
   arp6: '              a------             b------             c------             d------   ',
   drums: {
   kick: '              D------                 d------         D------                 d------          ',
-  snare:'            ss        s------        s        s     ss        s------        s        s        ',
+  snare:'                      s              s              ss        s              s              ss ',
   hat: {
-  hat:  '               ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt ttttttt',
-  d:    '               4948474 4947454 4947454 4947454 4947454 4948474 4947454 4947454 4947454 4947454',
+  hat:  '               ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
+  d:    '               4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
   },
   tLibrary: kit.tLibrary,
   }
-})
+}, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })
 
 session.editCursorTime = 8
 session.finalize()
