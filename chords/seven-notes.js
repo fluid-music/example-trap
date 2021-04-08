@@ -3,6 +3,7 @@ const fluid = require('fluid-music')
 const { MidiChord } = fluid.techniques
 
 const chords = [
+  // a
   new MidiChord({
     name: 'GM9/Gb',
     notes: [54, 55, 59, 62, 67, 69, 71],
@@ -20,7 +21,29 @@ const chords = [
   new MidiChord({
     name: 'Gadd11/D',
     notes: [50, 55, 60, 62, 67, 71, 72],
-  })
+  }),
+
+  // e
+  new MidiChord({
+    name: 'C/Gb',
+    notes: [54, 55, 60, 64, 67, 72, 74],
+  }),
+
+  new MidiChord({
+    name: 'C/Gb',
+    notes: [54, 55, 60, 64, 67, 72, 76],
+  }),
+
+  new MidiChord({
+    name: 'Dm9/E',
+    notes: [54, 55, 60, 64, 67, 72, 78],
+  }),
+
+  //f
+  new MidiChord({
+    name: 'CM7',
+    notes: [55, 57],
+  }),
 ]
 
 module.exports = chords
