@@ -10,8 +10,10 @@ const chordLibraries = [
   require('./chords/midi-chords'),
 ]
 
-const bpm = 40
+const bpm = 70
 const quarterNote = 1 / bpm * 60
+const delay16 = quarterNote / 4
+const delay32 = quarterNote / 8
 const delay8 = quarterNote / 2
 const delay13 = quarterNote * 2/6
 const delays13 = [delay13 * .96, delay13 * 1.04]
@@ -36,17 +38,34 @@ session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp64'
 
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 4, delay7 * 7, delay7 * 11, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
-  arp6: 'a       b     c   d     ',
+  arp6: 'a-      b-    c-  d-    ',
 })
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0]),
+  d:    '7',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...+...',
+  arp6: 'a------                            b------                            c------                            d------                            ',
+  drums: {
+  kick: 'D------              d------       D             d------              D------              d------       D             d------              ',
+  snare:'       s            s       s           sss                    s             s            s       s            ss             s           ss',
+  hat: {
+  hat:  ' tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt',
+  d:    ' 494847 494745 494745 494745 494745 494745 494847 494745 494745 494745 494745 349474 494847 494745 494745 494745 494745 494745 494847 494745',
+  },
+  tLibrary: kit.tLibrary,
+  }
+})
+
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
-  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
-  arp6: 'a    b    c    d        ',
+  r:    '1...+...2...+...3...+...4...+...',
+  arp6: 'a---    b---    c---    d---    ',
 })
+
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
@@ -55,78 +74,78 @@ session.insertScore({
 })
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
-  r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......4......+......',
-  arp6: '              a------             b------             c------             d------   ',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...',
+  arp6: '        a------             b------             c------             d------   ',
   drums: {
-  kick: '              D------              D------    d---    D------              D------    d---    ',
-  snare:'            ss       s------      s       s         ss       s------      s       s         ss',
+  kick: '        D------              D------    d---    D------              D------    d---    ',
+  snare:'      ss       s------      s       s         ss       s------      s       s         ss',
   hat: {
-  hat:  '               tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
-  d:    '               494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
+  hat:  '         tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
+  d:    '         494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
   },
   tLibrary: kit.tLibrary,
   }
 })
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
-  r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......4......+......',
-  arp6: '              e------             f------             g------             a------              ',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...',
+  arp6: 'e------             f------             g------             a------              ',
   drums: {
-  kick: '              D------                 d------         D------                 d------          ',
-  snare:'                      s              s              ss        s              s              ss ',
+  kick: 'D------                 d------         D------                 d------          ',
+  snare:'        s              s              ss        s              s              ss ',
   hat: {
-  hat:  '               ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
-  d:    '               4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
+  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
+  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
   },
   tLibrary: kit.tLibrary,
   }
-}, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })
+})
 
 
 // Random experiments after this point!
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [2, 0, -2, 0], null, chordLibraries[1]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [2, 0, -2, 0], null, chordLibraries[1]),
   d:    '7',
-  r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
-  arp6: '              a------             b------             c------             d------   ',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...1...+...2...+...3...+...',
+  arp6: 'a------             b------             c------             d------   ',
   drums: {
-  kick: '              D------                 d------         D------                 d------          ',
-  snare:'                      s              s              ss        s              s              ss ',
+  kick: 'D------                 d------         D------                 d------         ',
+  snare:'        s              s              ss        s              s              ss',
   hat: {
-  hat:  '               ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
-  d:    '               4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
+  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
+  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
   },
   tLibrary: kit.tLibrary,
   }
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })
+})
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [-1,-2,-3,-4], null, chordLibraries[0]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [-1,-2,-3,-4], null, chordLibraries[0]),
   d:    '7',
-  r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
-  arp6: '              a------             b------             c------             d------   ',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...1...+...2...+...3...+...',
+  arp6: 'a------             b------             c------             d------   ',
   drums: {
-  kick: '              D------                 d------         D------                 d------          ',
-  snare:'                      s              s              ss        s              s              ss ',
+  kick: 'D------                 d------         D------                 d------         ',
+  snare:'        s              s              ss        s              s              ss',
   hat: {
-  hat:  '               ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
-  d:    '               4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
+  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
+  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
   },
   tLibrary: kit.tLibrary,
   }
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })
+})
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6], [-1,-2,-3], null, chordLibraries[1]),
   d:    '7',
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })  
+})  
 
 
 delay5 = delay7 / 2 * 5
@@ -135,7 +154,7 @@ session.insertScore({
   d:    '7',
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })  
+})  
 
 delay6 = delay7 / 2 * 6
 session.insertScore({
@@ -143,28 +162,28 @@ session.insertScore({
   d:    '7',
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })  
+})  
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7/2*7, delay7*7, delay7 /2*3*7], [-1,-7,-3], null, chordLibraries[1]),
   d:    '7',
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) })  
+})  
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7/2, delay7, delay7 /2*3], [-1,-7,-3], null, chordLibraries[1]),
   d:    '7',
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) }) 
+}) 
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([quarterNote, quarterNote * 2, quarterNote * 3], [2,-7,3], null, chordLibraries[1]),
   d:    '7',
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
-})//, { startTime: session.editCursorTime - 0.5 - (0.125 / 7 * 4) }) 
+}) 
 
 for (const i of range(20)) {
   const maxSize = 5
