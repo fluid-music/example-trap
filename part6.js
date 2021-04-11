@@ -12,14 +12,8 @@ const chordLibraries = [
 
 const bpm = 70
 const quarterNote = 1 / bpm * 60
-const delay16 = quarterNote / 4
 const delay32 = quarterNote / 8
 const delay8 = quarterNote / 2
-const delay13 = quarterNote * 2/6
-const delays13 = [delay13 * .96, delay13 * 1.04]
-const delay27 = quarterNote * 2/7
-const delays27 = [delay27 * 0.96, delay27 * 1.04]
-const delaysAlpha = [quarterNote / 2, quarterNote]
 const delay7 = quarterNote / 7
 
 const session = new fluid.FluidSession({ bpm, dLibrary }, [
@@ -38,7 +32,7 @@ session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp64'
 
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 4, delay7 * 7, delay7 * 11, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 4, delay7 * 7, delay7 * 11, delay7 * 15], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
   arp6: 'a-      b-    c-  d-    ',
@@ -62,28 +56,14 @@ session.insertScore({
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
-  r:    '1...+...2...+...3...+...4...+...',
-  arp6: 'a---    b---    c---    d---    ',
-})
-
-session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
-  d:    '7',
-  r:    '1 2 3 4 1 2 3 4 ',
-  arp6: 'a   b   c   d   ',
-})
-
-session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
-  d:    '7',
-  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...',
-  arp6: '        a------             b------             c------             d------   ',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...',
+  arp6: 'a------             b------             c------             d------   ',
   drums: {
-  kick: '        D------              D------    d---    D------              D------    d---    ',
-  snare:'      ss       s------      s       s         ss       s------      s       s         ss',
+  kick: 'D------              D------    d---    D------              D------    d---    ',
+  snare:'       s------      s       s         ss       s------      s       s         ss',
   hat: {
-  hat:  '         tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
-  d:    '         494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
+  hat:  ' tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
+  d:    ' 494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
   },
   tLibrary: kit.tLibrary,
   }
@@ -184,6 +164,13 @@ session.insertScore({
   r:    '1......+......2......+......3......+......4......+......1......+......2......+......3......+......',
   arp6: '              a------             b                   b------             d------   ',
 }) 
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 ',
+  arp6: 'a   b   c   d   ',
+})
 
 for (const i of range(20)) {
   const maxSize = 5
