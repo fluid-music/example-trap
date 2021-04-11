@@ -44,7 +44,7 @@ session.insertScore({
   arp6: 'a-      b-    c-  d-    ',
 })
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0]),
+  tLibrary: makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3]),
   d:    '7',
   r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...+...',
   arp6: 'a------                            b------                            c------                            d------                            ',

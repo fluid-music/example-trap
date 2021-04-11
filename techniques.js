@@ -342,10 +342,13 @@ class Multiple {
 class MidiScale {
   /**
    * @param {number} root the MIDI note number that will be implied by degree = 0
+   * @param {number[]} delays
+   * @param {number[]} deltas
+   * @param {number[]} scaleIntervals default is a minor scale [0, 2, 3, 5, 7, 8, 10]
    */
-  constructor(root = 57, delays, deltas) {
+  constructor(root = 57, delays, deltas, scaleIntervals = [0, 2, 3, 5, 7, 8, 10]) {
     this.rootMidiNoteNumber = root
-    this.scaleIntervals = [0, 2, 3, 5, 7, 8, 10] // minor scale
+    this.scaleIntervals = scaleIntervals // minor scale
     this.scaleSize = 12 // intervals in an octave
     // this.notes = range(13).map(i => this.scaleIntervals.map(n => (n + i * this.scaleSize) % 128)).flat()
     this.delays = delays

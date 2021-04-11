@@ -63,9 +63,9 @@ function makeArp6TLibrary(bpm, delta1 = 0, delta2 = 0) {
   }
 }
 
-function makeArp6TLibraryFromMidiChords(delayArray, degreeDeltaArray, forceSize, midiChords) {
+function makeArp6TLibraryFromMidiChords(delayArray, degreeDeltaArray, forceSize, midiChords, scaleIntervals) {
 
-  const scale = new MidiScale(52, delayArray, degreeDeltaArray)
+  const scale = new MidiScale(52, delayArray, degreeDeltaArray, scaleIntervals)
   return fluid.tLibrary.fromArray(midiChords.map(chord => {
     let degrees = scale.midiChordToDegreeArray(chord)
     if (typeof forceSize === 'number') {
