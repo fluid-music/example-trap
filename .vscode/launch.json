@@ -7,11 +7,11 @@
     {
       "type": "pwa-node",
       "request": "launch",
-      "name": "part6",
+      "name": "part7",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}/part6.js"
+      "program": "${workspaceFolder}/part7.js"
     }
   ]
 }
