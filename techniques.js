@@ -356,6 +356,7 @@ class MidiScale {
   }
 
   degreeToMidiNoteNumber(degree) {
+    if (typeof degree !== 'number') degree = 0 // use use the root
     const octave = Math.floor(degree / this.scaleIntervals.length)
     const degreeInOctave = (degree >= 0)
       ? degree % this.scaleIntervals.length
@@ -370,6 +371,7 @@ class MidiScale {
      * @param {import('fluid-music').UseContext} context
      */
     const use = (context) => {
+      if (typeof degree !== 'number') return
       const mainNoteNumber = this.degreeToMidiNoteNumber(degree)
       const mainNote = new techniques.MidiNote(mainNoteNumber)
       mainNote.use(context)

@@ -75,7 +75,12 @@ function makeArp6TLibraryFromMidiChords(delayArray, degreeDeltaArray, forceSize,
       })
     }
     // fluid.random.shuffle(degrees)
-    return new Arpeggiator(degrees.map(n => (n && n.hasOwnProperty('degree')) && scale.makeTechnique(n.degree)))
+    const arpTechnique = new Arpeggiator(degrees.map(n => {
+      if (!n || !n.hasOwnProperty('degree')) return
+      return scale.makeTechnique(n.degree)
+    }))
+
+    return arpTechnique
   }))
 }
 

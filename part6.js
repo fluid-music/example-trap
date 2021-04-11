@@ -21,7 +21,7 @@ const session = new fluid.FluidSession({ bpm, dLibrary }, [
   { name: 'drums', gainDb: -5.2, tLibrary: kit.tLibrary, children: [
     { name: 'kick' },
     { name: 'snare', gainDb: -8.5 },
-    { name: 'hat', gainDb: -9.7 },
+    { name: 'hat', gainDb: -11 },
   ]},
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
@@ -29,16 +29,9 @@ const session = new fluid.FluidSession({ bpm, dLibrary }, [
 session.getTrackByName('verbShort').addReceiveFrom(session.getTrackByName('arp6'))
 session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp64'), -17)
 
-
-
-session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 4, delay7 * 7, delay7 * 11, delay7 * 15], [7, -7, 2, 3], null, chordLibraries[0]),
-  d:    '7',
-  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
-  arp6: 'a-      b-    c-  d-    ',
-})
-session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3]),
+const scoreADefaultTLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0])
+const scoreA = {
+  tLibrary: scoreADefaultTLibrary,
   d:    '7',
   r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...+...',
   arp6: 'a------                            b------                            c------                            d------                            ',
@@ -51,7 +44,29 @@ session.insertScore({
   },
   tLibrary: kit.tLibrary,
   }
+}
+
+
+session.insertScore({
+  tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 4, delay7 * 7, delay7 * 11, delay7 * 15], [7, -7, 2, 3], null, chordLibraries[0]),
+  d:    '7',
+  r:    '1 2 3 4 1 2 3 4 1 2 3 4 ',
+  arp6: 'a-      b-    c-  d-    ',
 })
+
+session.insertScore(scoreA)
+
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
+session.insertScore(scoreA)
+
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
+session.insertScore(scoreA)
+
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -2, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7])
+session.insertScore(scoreA)
+
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [1, -2, 2, -1], null, chordLibraries[0],  [0, -2, 2, 3, 7, 5, 8])
+session.insertScore(scoreA)
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
