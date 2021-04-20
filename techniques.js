@@ -211,7 +211,7 @@ class OnOtherTrack {
   use(context) {
     const otherTrack = (this.track) ? this.track : context.session.getOrCreateTrackByName(this.trackName)
     context = {...context, ...{track: otherTrack}}
-    this.technique.use(context)
+    return this.technique.use(context)
   }
 }
 
@@ -372,16 +372,34 @@ class MidiScale {
      */
     const use = (context) => {
       if (typeof degree !== 'number') return
-      const mainNoteNumber = this.degreeToMidiNoteNumber(degree)
-      const mainNote = new techniques.MidiNote(mainNoteNumber)
-      mainNote.use(context)
-      for (let i = 0; i < this.delays.length; i ++) {
-        const delay = this.delays[i]
-        const noteNumber = this.degreeToMidiNoteNumber(degree + (this.deltas[i] || 0))
+      const trackNames = [context.track.name, ...converters.range(this.delays.length).map(i => context.track.name + (i+1))]
+      const delays = [0, ...this.delays]
+      const deltas = [0, ...this.deltas]
+
+      if (!context.data.noteMap) context.data.noteMap = new Map()
+      const noteMap = context.data.noteMap
+
+      outerLoop: for (const [i, delay] of delays.entries()) {
+        const trackName = trackNames[i]
+        const noteNumber = this.degreeToMidiNoteNumber(degree + (deltas[i] || 0))
+        const time = context.session.timeSecondsToWholeNotes(delay) + context.startTime - context.clip.startTime
+
+        for (const checkNumber of [noteNumber-1, noteNumber-2, noteNumber+1, noteNumber+2]) {
+          if (noteMap.has(checkNumber)) {
+            for (const note of noteMap.get(checkNumber)) {
+              if (Math.abs(note.startTime - time) < 0.01) {
+                continue outerLoop;
+              }
+            }
+          }
+        }
+
         const midiNote = new techniques.MidiNote(noteNumber)
-        const onOtherTrack = new OnOtherTrack(context.track.name + (i+1), midiNote)
+        const onOtherTrack = new OnOtherTrack(trackName, midiNote)
         const nudged = new techniques.Nudge(delay, onOtherTrack)
-        nudged.use(context)
+        const note = nudged.use(context)
+        if (!noteMap.has(noteNumber)) noteMap.set(noteNumber, [])
+        noteMap.get(noteNumber).push(note)
       }
     }
     return { use }
