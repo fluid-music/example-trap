@@ -84,10 +84,14 @@ function makeArp6TLibraryFromMidiChords(delayArray, degreeDeltaArray, forceSize,
   }))
 }
 
+const tLibGainAuto = {};
+[-Infinity, -25, -18, -13, -10, -5, -3, -2, 0, 4].forEach((value, i, all) => {
+  tLibGainAuto[i] = new fluid.techniques.TrackAutomation({ paramKey: 'gain', value })
+})
 
 function makeArp6Tracks(bpm) {
   const arpTrack = { name: 'arp', dLibrary, children: [
-    { name: 'arp6', plugins: [zebralette.cMono()], tLibrary: fluid.tLibrary.fromArray([
+    { name: 'arp6', gainDb: -6, plugins: [zebralette.cMono()], tLibrary: fluid.tLibrary.fromArray([
       [0, 11, 12, 14, 16, null],
       [0, 11, 12, 16, 19, null],
       [-1, 0, 11, 12, 16, null],
@@ -97,15 +101,42 @@ function makeArp6Tracks(bpm) {
     { name: 'arp62', gainDb: -9, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 8 })] },
     { name: 'arp63', gainDb: -10, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
     { name: 'arp64', gainDb: -11, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
-    { name: 'arp65', gainDb: -12, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
-    { name: 'arp66', gainDb: -13, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    // { name: 'arp65', gainDb: -12, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    // { name: 'arp66', gainDb: -13, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
   ]}
 
-  return arpTrack
+  const tLibArpSync = fluid.tLibrary.merge(tLibGainAuto, fluid.tLibrary.fromArray([
+    [0, 11, 12, 14, 16, null],
+    [0, 11, 12, 16, 19, null],
+    [-1, 0, 11, 12, 16, null],
+    [-1, 0, 11, 12, 16, 19],
+  ].map((intervals) => makeArp6TLibrary(bpm, 55, intervals))))
+
+  const arpTrackSync = { name: 'arpSync', gainDb: -10, width: -1, dLibrary, children: [
+    { name: 'arp6S', gainDb: -6, plugins: [zebralette.cMonoSync()], tLibrary: tLibArpSync },
+    { name: 'arp6S1', gainDb: -8, pan: -.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 7 })] },
+    { name: 'arp6S2', gainDb: -11, pan: 0.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 8 })] },
+    { name: 'arp6S3', gainDb: -14, pan: -.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
+    { name: 'arp6S4', gainDb: -17, pan: 0.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
+    // { name: 'arp6S5', gainDb: -12, pan: -.5, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
+    // { name: 'arp6S6', gainDb: -13, pan: 0.5, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
+  ]}
+
+  return { name: 'All arp tracks', children: [arpTrack, arpTrackSync] }
 }
 
 
+function copyTrackMidiClips(session, source, destination) {
+  if (typeof source === 'string') source = session.getTrackByName(source)
+  if (typeof destination === 'string') destination = session.getTrackByName(destination)
+
+  for (const midiClip of source.midiClips) {
+    destination.midiClips.push(midiClip)
+  }
+}
+
 module.exports = {
+  copyTrackMidiClips,
   makeArp6TLibrary,
   makeArp6TLibraryFromMidiChords,
   makeGlissTracks,

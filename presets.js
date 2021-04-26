@@ -11,6 +11,9 @@ const zebraletteCPop2FxpB64 = fs.readFileSync(zebraletteCPop2Filename).toString(
 const zebraletteCMonoFilename = path.join(__dirname, 'presets', 'zebralette-cmono.FXP')
 const zebraletteCMonoFxpB64 = fs.readFileSync(zebraletteCMonoFilename).toString('base64')
 
+const zebraletteCMonoSyncFilename = path.join(__dirname, 'presets', 'zebralette-cmono-sync.FXP')
+const zebraletteCMonoSyncFxpB64 = fs.readFileSync(zebraletteCMonoSyncFilename).toString('base64')
+
 const dfHallLong = path.join(__dirname, 'presets', 'dfhall-long.FXP')
 const dfHallLongFxpB64 = fs.readFileSync(dfHallLong)
 const dfHallShort = path.join(__dirname, 'presets', 'dfhall-short.FXP')
@@ -37,6 +40,12 @@ module.exports = {
       if (params) zebralette.parameters = params
       return zebralette
     },
+    cMonoSync(params) {
+      const zebralette = new plugins.ZebraletteVst2()
+      zebralette.vst2.presetBase64 = zebraletteCMonoSyncFxpB64
+      if (params) zebralette.parameters = params
+      return zebralette
+    },
   },
 
   dragonflyHall: {
@@ -50,5 +59,34 @@ module.exports = {
       plugin.vst2.presetBase64 = dfHallShortFxpB64
       return plugin
     },
+  },
+
+  tStereoDelay: {
+    sixteenth(bpm) {
+      const plugin = new plugins.TStereoDelayVst2(tStereoDelayBase)
+      plugin.parameters.lDelayMs = 60000 / bpm / 4
+      plugin.parameters.rDelayMs = (60000 / bpm / 4) + 1.5
+      return plugin
+    },
+    stereo8and16(bpm) {
+      const plugin = new plugins.TStereoDelayVst2(tStereoDelayBase)
+      plugin.parameters.lDelayMs = 60000 / bpm / 4
+      plugin.parameters.rDelayMs = 60000 / bpm / 4
+      return plugin
+    }
   }
+}
+
+const tStereoDelayBase = {
+  dryDb: -50,
+  wetDb: 0,
+  sync: 0,
+  lFeedbackPercent: 54,
+  rFeedbackPercent: 54,
+  lCrossFbPercent: 12,
+  rCrossFbPercent: 12,
+  lLowCutHz: 200,
+  rLowCutHz: 200,
+  lHighCutHz: 9000,
+  rHighCutHz: 11000,
 }

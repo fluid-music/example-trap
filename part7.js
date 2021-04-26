@@ -4,12 +4,20 @@ const { range } = converters
 const dLibrary = require('./d-library').dLibrary
 const kit = require('@fluid-music/kit')
 const rides = require('@fluid-music/rides')
-const { dragonflyHall } = require('./presets')
-const { makeGlissTracks, makeArp6Tracks, makeArp6TLibrary, makeArp6TLibraryFromMidiChords } = require('./components')
+const tr808 = require('@fluid-music/tr-808')
+const { dragonflyHall, tStereoDelay } = require('./presets')
+const { copyTrackMidiClips, makeArp6Tracks, makeArp6TLibraryFromMidiChords, makeArp6SModulationTLibrary } = require('./components')
 const chordLibraries = [
   require('./chords/seven-notes'),
   require('./chords/midi-chords'),
 ]
+
+const tLibraryBass = {
+  g: fluid.techniques.AudioFile.copy(tr808.bass.g, { startInSourceSeconds: 0.275, fadeInSeconds: 0.035, fadeOutSeconds: 0.1 }),
+  d: fluid.techniques.AudioFile.copy(tr808.bass.g, { startInSourceSeconds: 0.275, fadeInSeconds: 0.035, fadeOutSeconds: 0.1, pitchSemitones: -5, gainDb: 3, }),
+  1: fluid.techniques.AudioFile.copy(tr808.bass.g),
+  5: fluid.techniques.AudioFile.copy(tr808.bass.g, { pitchSemitones: -5 })
+}
 
 const bpm = 70
 const quarterNote = 1 / bpm * 60
@@ -20,17 +28,28 @@ const delays4times7over32 = [delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 
 
 const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
+  { name: 'bass', gainDb: -8, tLibrary: tr808.bass },
   { name: 'drums', gainDb: -5.2, tLibrary: kit.tLibrary, children: [
     { name: 'kick' },
     { name: 'snare', gainDb: -8.5 },
-    { name: 'hat', gainDb: -11 },
+    { name: 'hat', gainDb: -16 },
     { name: 'ride', gainDb: -10 },
+    { name: 'rideSoft', gainDb: -22 },
   ]},
+  { name: 'delay16th', gainDb: -13, plugins: [ tStereoDelay.sixteenth(bpm) ] },
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
 ])
 session.getTrackByName('verbShort').addReceiveFrom(session.getTrackByName('arp6'))
 session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp64'), -17)
+const delay16Track = session.getTrackByName('delay16th')
+// arp6 delays
+delay16Track.addReceiveFrom(session.getTrackByName('arp6'))
+delay16Track.addReceiveFrom(session.getTrackByName('arp62'), -4.5)
+delay16Track.addReceiveFrom(session.getTrackByName('arp64'), -7)
+// sync delays
+delay16Track.addReceiveFrom(session.getTrackByName('arp6S1'))
+delay16Track.addReceiveFrom(session.getTrackByName('arp6S3'))
 
 const scoreADefaultTLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0])
 const scoreA = {
@@ -55,7 +74,37 @@ const scoreADrums = {
   }
 }
 
+const scoreB = {
+  tLibrary: scoreADefaultTLibrary,
+  d:        '7',
+  r:        '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...tttt',
+  arp6:     'a------                            b------                            c------                               ',
+  bass: {
+  r:        '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...tttt',
+  bass:     'g-------------g-------------g------g-------------                     d---------------------------',
+  d:        '6             4             2      7                                  8                           ',
+  tLibrary: tLibraryBass,
+  },
+  rideSoft: {
+  d:        '1',
+  rideSoft: 'd------b------c------d------d------a------b------c------d------c------d------b------c------d------b---------',
+  tLibrary: rides.rides
+  }
+}
 
+const tFadeOut = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -Infinity })
+const tFadeToUnity = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0 })
+const tFadeToMinus12Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -12 })
+const tFadeTo3Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 3 })
+const tFadeTo6Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 6 })
+const tFadeToUnityCurve = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0, curve: 0.8 })
+
+
+scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
+session.insertScore({ ...scoreB, bass: undefined, arp6S: '0', arp6S1: '0', arp6S2: '0', arp6S3: '0', arp6S4: '0' })
+
+// Mute the delay16th track and insert the "bridge"
+session.useTechnique(tFadeOut,  { track: delay16Track, durationSeconds: 0.01 })
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 4, delay7 * 7, delay7 * 11, delay7 * 14], [7, -7, 2, 3], null, chordLibraries[0]),
   d:     '7',
@@ -68,11 +117,26 @@ session.insertScore({
   }
 })
 
-scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
+// Fade the delay back in over 20s
+session.useTechnique(tFadeToUnity, { track: delay16Track, durationSeconds: 20 })
+scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
+session.insertScore({ scoreB,  r:'1' , arp6S: '7'})
+scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 5, 7, 2, 3, 8])
+session.insertScore({scoreB, r:'1' , arp6S1: '8'})
+scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
+session.insertScore({ scoreB, r: '1', arp6S2: '8', arp6S3: '6', arp6S4: '6' })
+
+session.useTechnique(tFadeToMinus12Db, { track: 'arp', duration: 0.01, startTime: session.editCursorTime -0.01 })
+session.useTechnique(tFadeToUnityCurve, { track: 'arp', startTime: session.editCursorTime + 0.01, duration: 4 })
+session.useTechnique(tFadeTo6Db, { track: delay16Track, duration: 4.2 })
+
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
 session.insertScore(scoreA)
 
+
+
 scoreA.drums = scoreADrums
-scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
 session.insertScore(scoreA)
 
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -1, 2, 3], null, chordLibraries[0],  [0, 3, 5, 10])
@@ -160,6 +224,8 @@ session.insertScore({
   r:    '1 2 3 4 1 2 3 4 ',
   arp6: 'a   b   c   d   ',
 })
+
+for (const suffix of ['', '1', '2', '3', '4']) copyTrackMidiClips(session, 'arp6'+suffix, 'arp6S'+suffix)
 
 session.finalize()
 session.saveAsReaperFile('part7')
