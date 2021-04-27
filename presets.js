@@ -63,14 +63,14 @@ module.exports = {
 
   tStereoDelay: {
     sixteenth(bpm) {
-      const plugin = new plugins.TStereoDelayVst2(tStereoDelayBase)
+      const plugin = new plugins.TStereoDelayVst2({ ...tStereoDelayBase })
       plugin.parameters.lDelayMs = 60000 / bpm / 4
       plugin.parameters.rDelayMs = (60000 / bpm / 4) + 1.5
       return plugin
     },
     stereo8and16(bpm) {
-      const plugin = new plugins.TStereoDelayVst2(tStereoDelayBase)
-      plugin.parameters.lDelayMs = 60000 / bpm / 4
+      const plugin = new plugins.TStereoDelayVst2({ ...tStereoDelayBase })
+      plugin.parameters.lDelayMs = 60000 / bpm / 2
       plugin.parameters.rDelayMs = 60000 / bpm / 4
       return plugin
     }

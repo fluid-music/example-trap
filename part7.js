@@ -31,12 +31,13 @@ const session = new fluid.FluidSession({ bpm, dLibrary }, [
   { name: 'bass', gainDb: -8, tLibrary: tr808.bass },
   { name: 'drums', gainDb: -5.2, tLibrary: kit.tLibrary, children: [
     { name: 'kick' },
-    { name: 'snare', gainDb: -8.5 },
-    { name: 'hat', gainDb: -16 },
+    { name: 'snare', gainDb: -9.2 },
+    { name: 'hat', gainDb: -20 },
     { name: 'ride', gainDb: -10 },
     { name: 'rideSoft', gainDb: -22 },
   ]},
-  { name: 'delay16th', gainDb: -13, plugins: [ tStereoDelay.sixteenth(bpm) ] },
+  { name: 'delay16th', gainDb: -13, plugins: [tStereoDelay.sixteenth(bpm)] },
+  { name: 'delay8+16', gainDb: -13, plugins: [tStereoDelay.stereo8and16(bpm)] },
   { name: 'verbLong', plugins: [dragonflyHall.long()] },
   { name: 'verbShort', gainDb: -25, plugins: [dragonflyHall.short()] },
 ])
@@ -48,8 +49,10 @@ delay16Track.addReceiveFrom(session.getTrackByName('arp6'))
 delay16Track.addReceiveFrom(session.getTrackByName('arp62'), -4.5)
 delay16Track.addReceiveFrom(session.getTrackByName('arp64'), -7)
 // sync delays
-delay16Track.addReceiveFrom(session.getTrackByName('arp6S1'))
-delay16Track.addReceiveFrom(session.getTrackByName('arp6S3'))
+delay16Track.addReceiveFrom(session.getTrackByName('arp6S1'), -11)
+delay16Track.addReceiveFrom(session.getTrackByName('arp6S4'), -5)
+// misc 16th delays
+delay16Track.addReceiveFrom(session.getTrackByName('hat'))
 
 const scoreADefaultTLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0])
 const scoreA = {
@@ -73,6 +76,25 @@ const scoreADrums = {
   tLibrary: kit.tLibrary,
   }
 }
+const ks1 = {
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...+...',
+  kick: 'D------                     d------D-----------                d------D------                     d------D-----------                d------',
+  //     1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......'
+  snare:'       s------      s                   sss                                  s------      s                   sss                         ss',
+}
+
+
+const scoreAFullHat = {
+  r:   scoreA.r,
+  hat: 'ttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt t',
+  d:   '94847 494745 494745 494745 494745 494745 494847 494745 494745 494745 494745 349474 494847 494745 494745 494745 494745 494745 494847 494745',
+}
+
+const scoreAFullHatRamp = {
+  r:   scoreA.r,
+  hat: 'ttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt t',
+  d:   '30201 302012 312122 312122 413132 413132 413132 514142 524243 524243 624243 349474 494847 494745 494745 494745 494745 494745 494847 494745',
+}
 
 const scoreB = {
   tLibrary: scoreADefaultTLibrary,
@@ -95,6 +117,7 @@ const scoreB = {
 const tFadeOut = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -Infinity })
 const tFadeToUnity = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0 })
 const tFadeToMinus12Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -12 })
+const tFadeToMinus6Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -6 })
 const tFadeTo3Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 3 })
 const tFadeTo6Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 6 })
 const tFadeToUnityCurve = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0, curve: 0.8 })
@@ -122,23 +145,24 @@ session.useTechnique(tFadeToUnity, { track: delay16Track, durationSeconds: 20 })
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
 session.insertScore({ scoreB,  r:'1' , arp6S: '7'})
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 5, 7, 2, 3, 8])
-session.insertScore({scoreB, r:'1' , arp6S1: '8'})
+session.insertScore({scoreB, r:'1' , arp6S1: '6'})
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
 session.insertScore({ scoreB, r: '1', arp6S2: '8', arp6S3: '6', arp6S4: '6' })
 
 session.useTechnique(tFadeToMinus12Db, { track: 'arp', duration: 0.01, startTime: session.editCursorTime -0.01 })
 session.useTechnique(tFadeToUnityCurve, { track: 'arp', startTime: session.editCursorTime + 0.01, duration: 4 })
+session.useTechnique(tFadeToMinus6Db, { track: 'verbLong', duration: 0.01, startTime: session.editCursorTime -0.01 })
+session.useTechnique(tFadeToUnityCurve, { track: 'verbLong', startTime: session.editCursorTime + 0.01, duration: 4 })
 session.useTechnique(tFadeTo6Db, { track: delay16Track, duration: 4.2 })
 
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
-session.insertScore(scoreA)
+session.insertScore({ scoreA, scoreAFullHatRamp })
 
-
+scoreA.drums = { ...scoreADrums.drums, kick: ks1.kick, snare: ks1.snare, bass: scoreB.bass }
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
+session.insertScore({ scoreA })
 
 scoreA.drums = scoreADrums
-scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
-session.insertScore(scoreA)
-
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -1, 2, 3], null, chordLibraries[0],  [0, 3, 5, 10])
 session.insertScore(scoreA)
 

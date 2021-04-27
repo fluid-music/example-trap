@@ -97,10 +97,10 @@ function makeArp6Tracks(bpm) {
       [-1, 0, 11, 12, 16, null],
       [-1, 0, 11, 12, 16, 19],
     ].map((intervals) => makeArp6TLibrary(bpm, 55, intervals)))},
-    { name: 'arp61', gainDb: -8, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 7 })] },
-    { name: 'arp62', gainDb: -9, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 8 })] },
-    { name: 'arp63', gainDb: -10, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
-    { name: 'arp64', gainDb: -11, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    { name: 'arp61', gainDb: -8, pan: -.6, plugins: [zebralette.cMono({ env1AttackPercent: 7 })] },
+    { name: 'arp62', gainDb: -9, pan: 0.0, plugins: [zebralette.cMono({ env1AttackPercent: 8 })] },
+    { name: 'arp63', gainDb: -10, pan: 0.6, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
+    { name: 'arp64', gainDb: -11, pan: -.6, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
     // { name: 'arp65', gainDb: -12, pan: -.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
     // { name: 'arp66', gainDb: -13, pan: 0.5, plugins: [zebralette.cMono({ env1AttackPercent: 9 })] },
   ]}
@@ -114,10 +114,10 @@ function makeArp6Tracks(bpm) {
 
   const arpTrackSync = { name: 'arpSync', gainDb: -10, width: -1, dLibrary, children: [
     { name: 'arp6S', gainDb: -6, plugins: [zebralette.cMonoSync()], tLibrary: tLibArpSync },
-    { name: 'arp6S1', gainDb: -8, pan: -.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 7 })] },
-    { name: 'arp6S2', gainDb: -11, pan: 0.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 8 })] },
-    { name: 'arp6S3', gainDb: -14, pan: -.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
-    { name: 'arp6S4', gainDb: -17, pan: 0.5, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
+    { name: 'arp6S1', gainDb: -8, pan: 0.0, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 7 })] },
+    { name: 'arp6S2', gainDb: -11, pan: -.6, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 8 })] },
+    { name: 'arp6S3', gainDb: -14, pan: 0.6, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
+    { name: 'arp6S4', gainDb: -17, pan: -.6, tLibrary: tLibGainAuto, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
     // { name: 'arp6S5', gainDb: -12, pan: -.5, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
     // { name: 'arp6S6', gainDb: -13, pan: 0.5, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
   ]}
