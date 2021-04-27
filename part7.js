@@ -114,6 +114,38 @@ const scoreB = {
   }
 }
 
+const chorusPart1 = {
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
+  d:    '7',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...',
+  arp6: 'a------             b------             c------             d------   ',
+  drums: {
+  kick: 'D------              D------    d---    D------              D------    d---    ',
+  snare:'       s------      s       s         ss       s------      s       s         ss',
+  hat: {
+  hat:  ' tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
+  d:    ' 494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
+  },
+  tLibrary: kit.tLibrary,
+  }
+}
+
+const chorusPart2 = {
+  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
+  d:    '7',
+  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...',
+  arp6: 'e------             f------             g------             a------             ',
+  drums: {
+  kick: 'D------                 d------         D------                 d------         ',
+  snare:'        s              s              ss        s              s              ss',
+  hat: {
+  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
+  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
+  },
+  tLibrary: kit.tLibrary,
+  }
+}
+
 const tFadeOut = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -Infinity })
 const tFadeToUnity = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0 })
 const tFadeToMinus12Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -12 })
@@ -146,6 +178,11 @@ scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2,
 session.insertScore({ scoreB,  r:'1' , arp6S: '7'})
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 5, 7, 2, 3, 8])
 session.insertScore({scoreB, r:'1' , arp6S1: '6'})
+
+
+session.insertScore(chorusPart1)
+session.insertScore(chorusPart2)
+
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
 session.insertScore({ scoreB, r: '1', arp6S2: '8', arp6S3: '6', arp6S4: '6' })
 
@@ -175,38 +212,8 @@ session.insertScore(scoreA)
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -2, 2, -1], null, chordLibraries[0],  [0, -2, 2, 3, 7, 5, 8])
 session.insertScore(scoreA)
 
-session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
-  d:    '7',
-  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...',
-  arp6: 'a------             b------             c------             d------   ',
-  drums: {
-  kick: 'D------              D------    d---    D------              D------    d---    ',
-  snare:'       s------      s       s         ss       s------      s       s         ss',
-  hat: {
-  hat:  ' tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
-  d:    ' 494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
-  },
-  tLibrary: kit.tLibrary,
-  }
-})
-
-session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [7, -7, 2, 3], null, chordLibraries[0]),
-  d:    '7',
-  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...',
-  arp6: 'e------             f------             g------             a------              ',
-  drums: {
-  kick: 'D------                 d------         D------                 d------          ',
-  snare:'        s              s              ss        s              s              ss ',
-  hat: {
-  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
-  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
-  },
-  tLibrary: kit.tLibrary,
-  }
-})
-
+session.insertScore(chorusPart1)
+session.insertScore(chorusPart2)
 
 // Random experiments after this point!
 
