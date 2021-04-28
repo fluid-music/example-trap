@@ -14,6 +14,12 @@ const zebraletteCMonoFxpB64 = fs.readFileSync(zebraletteCMonoFilename).toString(
 const zebraletteCMonoSyncFilename = path.join(__dirname, 'presets', 'zebralette-cmono-sync.FXP')
 const zebraletteCMonoSyncFxpB64 = fs.readFileSync(zebraletteCMonoSyncFilename).toString('base64')
 
+const teq128Filename = path.join(__dirname, 'presets', 'teq-128.FXP')
+const teq128B64 = fs.readFileSync(teq128Filename).toString('base64')
+
+const teq12678Filename = path.join(__dirname, 'presets', 'teq-12678.FXP')
+const teq12678B64 = fs.readFileSync(teq12678Filename).toString('base64')
+
 const dfHallLong = path.join(__dirname, 'presets', 'dfhall-long.FXP')
 const dfHallLongFxpB64 = fs.readFileSync(dfHallLong)
 const dfHallShort = path.join(__dirname, 'presets', 'dfhall-short.FXP')
@@ -46,6 +52,14 @@ module.exports = {
       if (params) zebralette.parameters = params
       return zebralette
     },
+    automationTechnique: {
+      cMonoSyncBase() {
+        return [
+          plugins.ZebraletteVst2.makeAutomation.osc1SpectraFX2ValPercent(-85),
+          plugins.ZebraletteVst2.makeAutomation.osc1SyncTune(12.82),
+        ]
+      }
+    },
   },
 
   dragonflyHall: {
@@ -74,6 +88,32 @@ module.exports = {
       plugin.parameters.rDelayMs = 60000 / bpm / 4
       return plugin
     }
+  },
+  tEqualizer: {
+    /**
+     * A zeroed equalizer plugin with three bands enabled
+     * - Band 1: 80   hz low shelf
+     * - Band 2: 300  hz peak notch
+     * - Band 8: 4000 hz high shelf
+     */
+    zero128() {
+      const plugin = new plugins.TEqualizerVst2()
+      plugin.vst2.presetBase64 = teq128B64
+      return plugin
+    },
+    /**
+     * A zeroed equalizer plugin with five bands enabled
+     * - Band 1: 80   hz low shelf
+     * - Band 2: 300  hz peak notch
+     * - Band 6: 1000 hz peak notch
+     * - Band 7: 2500 hz peak notch
+     * - Band 8: 4000 hz high shelf
+     */
+    zero12678() {
+      const plugin  = new plugins.TEqualizerVst2()
+      plugin.vst2.presetBase64 = teq12678B64
+      return plugin
+    },
   }
 }
 

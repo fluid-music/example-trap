@@ -5,7 +5,7 @@ const dLibrary = require('./d-library').dLibrary
 const kit = require('@fluid-music/kit')
 const rides = require('@fluid-music/rides')
 const tr808 = require('@fluid-music/tr-808')
-const { dragonflyHall, tStereoDelay } = require('./presets')
+const { dragonflyHall, tStereoDelay, zebralette, tEqualizer } = require('./presets')
 const { copyTrackMidiClips, makeArp6Tracks, makeArp6TLibraryFromMidiChords } = require('./components')
 const chordLibraries = [
   require('./chords/seven-notes'),
@@ -149,9 +149,11 @@ const tFadeToMinus6Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -
 const tFadeTo3Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 3 })
 const tFadeTo6Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 6 })
 const tFadeToUnityCurve = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0, curve: 0.8 })
+const tZebraOsc1Filter = fluid.plugins.ZebraletteVst2.makeAutomation.osc1SpectraFX2ValPercent
+const tZebraOsc1Sync = fluid.plugins.ZebraletteVst2.makeAutomation.osc1SyncTune
 
 // Mute all arp6S tracks by adding a single automation point
-const arpSTracks = ['arp6S', 'arp6S1', 'arp6S2', 'arp6S3', 'arp6S4']
+const arpSTracks = ['arp6S', 'arp6S1', 'arp6S2', 'arp6S3', 'arp6S4'].map(name => session.getTrackByName(name))
 arpSTracks.forEach(trackName => session.useTechnique(tMute, { track: trackName }))
 
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
@@ -181,6 +183,9 @@ session.insertScore({ scoreB, r:'1' , arp6S1: '6'})
 session.insertScore(chorusPart1)
 session.insertScore(chorusPart2)
 
+// After the "chorus", zero the arpS synths
+arpSTracks.forEach(track => session.useTechnique(zebralette.automationTechnique.cMonoSyncBase(), { track }))
+
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
 session.insertScore({ scoreB, r: '1', arp6S2: '8', arp6S3: '6', arp6S4: '6' })
 
@@ -193,8 +198,22 @@ session.useTechnique(tFadeTo6Db, { track: delay16Track, duration: 4.2 })
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
 session.insertScore({ ...scoreA, scoreAFullHatRamp }) // Hi-Hat Ramp
 
+session.useTechnique([tZebraOsc1Filter(0), tZebraOsc1Sync(12.8)], { track: 'arp6S' })
+session.useTechnique([tZebraOsc1Filter(5), tZebraOsc1Sync(12.8)], { track: 'arp6S1' })
+session.useTechnique([tZebraOsc1Filter(10), tZebraOsc1Sync(12.8)], { track: 'arp6S2' })
+session.useTechnique([tZebraOsc1Filter(20), tZebraOsc1Sync(12.8)], { track: 'arp6S3' })
+session.useTechnique([tZebraOsc1Filter(30), tZebraOsc1Sync(12.8)], { track: 'arp6S4' })
+
+// Drums return
+session.useTechnique(tFadeTo6Db, { track: 'bass', startTime: session.editCursorTime - 0.01, duration: 0.01 })
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
 session.insertScore({ ...scoreA, scoreADrums: scoreAHatRide, scoreADrumsKickSnare1, bass: scoreB.bass })
+
+session.useTechnique([tZebraOsc1Filter(-85), tZebraOsc1Sync(10)], { track: 'arp6S' });
+session.useTechnique([tZebraOsc1Filter(-70), tZebraOsc1Sync(10)], { track: 'arp6S1' });
+session.useTechnique([tZebraOsc1Filter(-55), tZebraOsc1Sync(10)], { track: 'arp6S2' });
+session.useTechnique([tZebraOsc1Filter(-40), tZebraOsc1Sync(10)], { track: 'arp6S3' });
+session.useTechnique([tZebraOsc1Filter(-25), tZebraOsc1Sync(10)], { track: 'arp6S4' });
 
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -1, 2, 3], null, chordLibraries[0],  [0, 3, 5, 10])
 session.insertScore({ ...scoreA, scoreADrumsKickSnare1, bass: scoreB.bass })
