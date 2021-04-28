@@ -6,7 +6,7 @@ const kit = require('@fluid-music/kit')
 const rides = require('@fluid-music/rides')
 const tr808 = require('@fluid-music/tr-808')
 const { dragonflyHall, tStereoDelay } = require('./presets')
-const { copyTrackMidiClips, makeArp6Tracks, makeArp6TLibraryFromMidiChords, makeArp6SModulationTLibrary } = require('./components')
+const { copyTrackMidiClips, makeArp6Tracks, makeArp6TLibraryFromMidiChords } = require('./components')
 const chordLibraries = [
   require('./chords/seven-notes'),
   require('./chords/midi-chords'),
@@ -43,6 +43,7 @@ const session = new fluid.FluidSession({ bpm, dLibrary }, [
 ])
 session.getTrackByName('verbShort').addReceiveFrom(session.getTrackByName('arp6'))
 session.getTrackByName('verbLong').addReceiveFrom(session.getTrackByName('arp64'), -17)
+
 const delay16Track = session.getTrackByName('delay16th')
 // arp6 delays
 delay16Track.addReceiveFrom(session.getTrackByName('arp6'))
@@ -61,10 +62,7 @@ const scoreA = {
   r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...+...',
   arp6: 'a------                            b------                            c------                            d------                            ',
 }
-const scoreADrums = {
-  drums: {
-  kick: 'D------              d------       D             d------              D------              d------       D             d------              ',
-  snare:'       s            s       s           sss                    s             s            s       s            ss             s           ss',
+const scoreAHatRide = {
   hat: {
   hat:  ' tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt',
   d:    ' 494847 494745 494745 494745 494745 494745 494847 494745 494745 494745 494745 349474 494847 494745 494745 494745 494745 494745 494847 494745',
@@ -74,24 +72,21 @@ const scoreADrums = {
   tLibrary: rides.rides
   },
   tLibrary: kit.tLibrary,
-  }
 }
-const ks1 = {
-  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...+...',
-  kick: 'D------                     d------D-----------                d------D------                     d------D-----------                d------',
-  //     1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......'
+const scoreADrumsKickSnare1 = {
+  //    '1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......'
+  kick: 'D------                     d------D------                     d------D------                     d------D------                     d------',
   snare:'       s------      s                   sss                                  s------      s                   sss                         ss',
+  tLibrary: kit.tLibrary,
 }
-
-
-const scoreAFullHat = {
-  r:   scoreA.r,
-  hat: 'ttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt t',
-  d:   '94847 494745 494745 494745 494745 494745 494847 494745 494745 494745 494745 349474 494847 494745 494745 494745 494745 494745 494847 494745',
+const scoreADrumsKickSnare2 = {
+  //    '1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......1......2......3......4......5......'
+  kick: 'D------              d------       D             d------              D------              d------       D             d------              ',
+  snare:'       s            s       s           sss                    s             s            s       s            ss             s           ss',
+  tLibrary: kit.tLibrary,
 }
 
 const scoreAFullHatRamp = {
-  r:   scoreA.r,
   hat: 'ttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt tttttt t',
   d:   '30201 302012 312122 312122 413132 413132 413132 514142 524243 524243 624243 349474 494847 494745 494745 494745 494745 494745 494847 494745',
 }
@@ -146,6 +141,7 @@ const chorusPart2 = {
   }
 }
 
+const tMute = new fluid.techniques.TrackGainAutomation({ gainDb: -Infinity })
 const tFadeOut = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -Infinity })
 const tFadeToUnity = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0 })
 const tFadeToMinus12Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: -12 })
@@ -154,9 +150,12 @@ const tFadeTo3Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 3 })
 const tFadeTo6Db = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 6 })
 const tFadeToUnityCurve = new fluid.techniques.TrackGainAutomationRamp({ gainDb: 0, curve: 0.8 })
 
+// Mute all arp6S tracks by adding a single automation point
+const arpSTracks = ['arp6S', 'arp6S1', 'arp6S2', 'arp6S3', 'arp6S4']
+arpSTracks.forEach(trackName => session.useTechnique(tMute, { track: trackName }))
 
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 10])
-session.insertScore({ ...scoreB, bass: undefined, arp6S: '0', arp6S1: '0', arp6S2: '0', arp6S3: '0', arp6S4: '0' })
+session.insertScore({ ...scoreB, bass: undefined })
 
 // Mute the delay16th track and insert the "bridge"
 session.useTechnique(tFadeOut,  { track: delay16Track, durationSeconds: 0.01 })
@@ -166,8 +165,8 @@ session.insertScore({
   r:     '1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1++',//1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1++
   arp6: ['a-              b-    c-    d-     ', '        e             d-'],
   ride: {
-  ride:  'c-b-c-a-b-a-b-a-c-b-c-d-b-a-b-a-a--',
-  d:     '3   2 3 0 2         2 1 3       8',
+   ride: 'c-b-c-a-b-a-b-a-c-b-c-d-b-a-b-a-a--',
+   d:    '3   2 3 0 2         2 1 3       8  ',
   tLibrary: rides.rides
   }
 })
@@ -175,10 +174,9 @@ session.insertScore({
 // Fade the delay back in over 20s
 session.useTechnique(tFadeToUnity, { track: delay16Track, durationSeconds: 20 })
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
-session.insertScore({ scoreB,  r:'1' , arp6S: '7'})
+session.insertScore({ scoreB, r:'1' , arp6S: '7'})
 scoreB.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 5, 7, 2, 3, 8])
-session.insertScore({scoreB, r:'1' , arp6S1: '6'})
-
+session.insertScore({ scoreB, r:'1' , arp6S1: '6'})
 
 session.insertScore(chorusPart1)
 session.insertScore(chorusPart2)
@@ -193,16 +191,15 @@ session.useTechnique(tFadeToUnityCurve, { track: 'verbLong', startTime: session.
 session.useTechnique(tFadeTo6Db, { track: delay16Track, duration: 4.2 })
 
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 8, 3])
-session.insertScore({ scoreA, scoreAFullHatRamp })
+session.insertScore({ ...scoreA, scoreAFullHatRamp }) // Hi-Hat Ramp
 
-scoreA.drums = { ...scoreADrums.drums, kick: ks1.kick, snare: ks1.snare, bass: scoreB.bass }
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
-session.insertScore({ scoreA })
+session.insertScore({ ...scoreA, scoreADrums: scoreAHatRide, scoreADrumsKickSnare1, bass: scoreB.bass })
 
-scoreA.drums = scoreADrums
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -1, 2, 3], null, chordLibraries[0],  [0, 3, 5, 10])
-session.insertScore(scoreA)
+session.insertScore({ ...scoreA, scoreADrumsKickSnare1, bass: scoreB.bass })
 
+scoreA.drums = { ...scoreAHatRide, scoreADrumsKickSnare2 } // from here on out, use the thicker KS pattern
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
 session.insertScore(scoreA)
 

@@ -86,7 +86,7 @@ function makeArp6TLibraryFromMidiChords(delayArray, degreeDeltaArray, forceSize,
 
 const tLibGainAuto = {};
 [-Infinity, -25, -18, -13, -10, -5, -3, -2, 0, 4].forEach((value, i, all) => {
-  tLibGainAuto[i] = new fluid.techniques.TrackAutomation({ paramKey: 'gain', value })
+  tLibGainAuto[i] = new fluid.techniques.TrackGainAutomation(value)
 })
 
 function makeArp6Tracks(bpm) {
