@@ -210,7 +210,7 @@ scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, 0, 2, 
 session.insertScore({ ...scoreA, scoreADrums: scoreAHatRide, scoreADrumsKickSnare1, bass: scoreB.bass })
 
 session.useTechnique([tZebraOsc1Filter(-85), tZebraOsc1Sync(10)], { track: 'arp6S' });
-session.useTechnique([tZebraOsc1Filter(-70), tZebraOsc1Sync(10)], { track: 'arp6S1' });
+session.useTechnique([tZebraOsc1Filter(-70), tZebraOsc1Sync(24.3)], { track: 'arp6S1' });
 session.useTechnique([tZebraOsc1Filter(-55), tZebraOsc1Sync(10)], { track: 'arp6S2' });
 session.useTechnique([tZebraOsc1Filter(-40), tZebraOsc1Sync(10)], { track: 'arp6S3' });
 session.useTechnique([tZebraOsc1Filter(-25), tZebraOsc1Sync(10)], { track: 'arp6S4' });
@@ -250,26 +250,16 @@ session.insertScore({
 })
 
 session.insertScore({
-  tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [-1,-2,-3,-4], null, chordLibraries[0]),
-  d:    '7',
-  r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...1...+...2...+...3...+...',
-  arp6: 'a------             b------             c------             d------   ',
-  drums: {
-  kick: 'D------                 d------         D------                 d------         ',
-  snare:'        s              s              ss        s              s              ss',
-  hat: {
-  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
-  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
-  },
-  tLibrary: kit.tLibrary,
-  }
-})
-
-session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 ',
   arp6: 'a   b   c   d   ',
+})
+
+session.insertScore({
+  tLibrary: fluid.tLibrary.fromArray(chordLibraries[0]),
+  r:       '1...+...2...+...3...+...4...+...',
+  arpPoly: 'a----   b-  c--  c--  d---  e---',
 })
 
 for (const suffix of ['', '1', '2', '3', '4']) copyTrackMidiClips(session, 'arp6'+suffix, 'arp6S'+suffix)

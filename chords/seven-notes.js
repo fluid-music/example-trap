@@ -30,19 +30,16 @@ const chords = [
   }),
 
   new MidiChord({
-    name: 'C/Gb',
     notes: [54, 55, 60, 64, 67, 72, 76],
   }),
 
   new MidiChord({
-    name: 'Dm9/E',
     notes: [54, 55, 60, 64, 67, 72, 78],
   }),
 
   //f
   new MidiChord({
-    name: 'CM7',
-    notes: [55, 57],
+    notes: [54, 55, 60, 64, 67, 72, 80],
   }),
 ]
 

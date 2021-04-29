@@ -123,7 +123,8 @@ function makeArp6Tracks(bpm) {
     // { name: 'arp6S6', gainDb: -13, pan: 0.5, plugins: [zebralette.cMonoSync({ env1AttackPercent: 9 })] },
   ]}
 
-  return { name: 'All arp tracks', children: [arpTrack, arpTrackSync] }
+  const arpTrackPoly = { name: 'arpPoly', gainDb: -10, plugins: [zebralette.cPop()] }
+  return { name: 'All arp tracks', children: [arpTrack, arpTrackSync, arpTrackPoly] }
 }
 
 
