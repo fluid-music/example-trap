@@ -1,6 +1,4 @@
 const fluid = require('fluid-music')
-const { converters, random } = fluid
-const { range } = converters
 const dLibrary = require('./d-library').dLibrary
 const kit = require('@fluid-music/kit')
 const rides = require('@fluid-music/rides')
@@ -24,7 +22,8 @@ const quarterNote = 1 / bpm * 60
 const delay32 = quarterNote / 8
 const delay8 = quarterNote / 2
 const delay7 = quarterNote / 7
-const delays4times7over32 = [delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28]
+const delays4times7over32 =         [delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28]
+const delays4Times7over32Modified = [delay32 * 7, delay32 * 14, delay32 * 28, delay32 * 28]
 
 const session = new fluid.FluidSession({ bpm, dLibrary }, [
   makeArp6Tracks(bpm),
@@ -55,7 +54,7 @@ delay16Track.addReceiveFrom(session.getTrackByName('arp6S4'), -5)
 // misc 16th delays
 delay16Track.addReceiveFrom(session.getTrackByName('hat'))
 
-const scoreADefaultTLibrary = makeArp6TLibraryFromMidiChords([delay32 * 7, delay32 * 14, delay32 * 21, delay32 * 28], [7, -7, 2, 3], null, chordLibraries[0])
+const scoreADefaultTLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0])
 const scoreA = {
   tLibrary: scoreADefaultTLibrary,
   d:    '7',
@@ -97,15 +96,15 @@ const scoreB = {
   r:        '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...tttt',
   arp6:     'a------                            b------                            c------                               ',
   bass: {
+  tLibrary: tLibraryBass,
   r:        '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...tttt',
   bass:     'g-------------g-------------g------g-------------                     d---------------------------',
   d:        '6             4             2      7                                  8                           ',
-  tLibrary: tLibraryBass,
   },
   rideSoft: {
+  tLibrary: rides.rides,
   d:        '1',
   rideSoft: 'd------b------c------d------d------a------b------c------d------c------d------b------c------d------b---------',
-  tLibrary: rides.rides
   }
 }
 
@@ -115,13 +114,13 @@ const chorusPart1 = {
   r:    '1...+...2...+...3...+...4...+...1...+...2...+...3...+...4...+...1...+...2...+...',
   arp6: 'a------             b------             c------             d------   ',
   drums: {
+  tLibrary: kit.tLibrary,
   kick: 'D------              D------    d---    D------              D------    d---    ',
   snare:'       s------      s       s         ss       s------      s       s         ss',
   hat: {
   hat:  ' tttttt tttttt tttttt tttttt tttttt tttt tttttt tttttt tttttt tttttt ttttttttttt',
   d:    ' 494847 494745 494745 494745 494745 4947 494847 494745 494745 494745 49474534947',
   },
-  tLibrary: kit.tLibrary,
   }
 }
 
@@ -139,6 +138,17 @@ const chorusPart2 = {
   },
   tLibrary: kit.tLibrary,
   }
+}
+
+const chorusSteadyKick = {
+  d:     '                                            3   7  4    7   5   7   6   7       ',
+  kick:  'D-------D-------D-------D-------D-------D---D---D---D---D---D---D---D---D---D---',
+  snare: '       s               s              ss       s               s              ss',
+}
+const chorusPart3 = {
+  ...chorusPart2,
+  drums: { ...chorusPart2.drums, ...chorusSteadyKick },
+  arp6:  'e------             f------             g------             h------             ',
 }
 
 const tMute = new fluid.techniques.TrackGainAutomation({ gainDb: -Infinity })
@@ -218,20 +228,45 @@ session.useTechnique([tZebraOsc1Filter(-25), tZebraOsc1Sync(10)], { track: 'arp6
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -1, 2, 3], null, chordLibraries[0],  [0, 3, 5, 10])
 session.insertScore({ ...scoreA, scoreADrumsKickSnare1, bass: scoreB.bass })
 
+session.useTechnique([tZebraOsc1Filter(-85), tZebraOsc1Sync(10)], { track: 'arp6S' });
+session.useTechnique([tZebraOsc1Filter(-70), tZebraOsc1Sync(24.3)], { track: 'arp6S1' });
+session.useTechnique([tZebraOsc1Filter(-55), tZebraOsc1Sync(10)], { track: 'arp6S2' });
+session.useTechnique([tZebraOsc1Filter(-40), tZebraOsc1Sync(10)], { track: 'arp6S3' });
+session.useTechnique([tZebraOsc1Filter(-25), tZebraOsc1Sync(10)], { track: 'arp6S4' });
+
 scoreA.drums = { ...scoreAHatRide, scoreADrumsKickSnare2 } // from here on out, use the thicker KS pattern
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -7, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7, 3])
 session.insertScore(scoreA)
 
+session.useTechnique(tZebraOsc1Sync(30), { track: 'arp6S' });
+session.useTechnique(tZebraOsc1Sync(24.3), { track: 'arp6S1' });
+session.useTechnique(tZebraOsc1Sync(29), { track: 'arp6S2' });
+session.useTechnique(tZebraOsc1Sync(32), { track: 'arp6S3' });
+session.useTechnique(tZebraOsc1Sync(33), { track: 'arp6S4' });
+
 scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [7, -2, 2, 3], null, chordLibraries[0],  [0, 2, 3, 5, 7])
 session.insertScore(scoreA)
 
-scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4times7over32, [1, -2, 2, -1], null, chordLibraries[0],  [0, -2, 2, 3, 7, 5, 8])
+session.useTechnique(tZebraOsc1Filter(-70), { track: 'arp6S' })
+session.useTechnique(tZebraOsc1Filter(-75), { track: 'arp6S1' })
+
+scoreA.tLibrary = makeArp6TLibraryFromMidiChords(delays4Times7over32Modified, [1, -2, 2, -1], null, chordLibraries[0],  [0, -2, 2, 3, 7, 5, 8])
 session.insertScore(scoreA)
 
-session.insertScore(chorusPart1)
-session.insertScore(chorusPart2)
+session.useTechnique(tZebraOsc1Filter(14), { track: 'arp6S' })
+session.useTechnique(tZebraOsc1Filter(14), { track: 'arp6S1' })
+session.useTechnique(tZebraOsc1Sync(30), { track: 'arp6S' });
+session.useTechnique(tZebraOsc1Sync(24.3), { track: 'arp6S1' });
+session.useTechnique(tZebraOsc1Sync(30), { track: 'arp6S2' });
+session.useTechnique(tZebraOsc1Sync(30), { track: 'arp6S3' });
+session.useTechnique(tZebraOsc1Sync(30), { track: 'arp6S4' });
 
-// Random experiments after this point!
+session.insertScore(chorusPart1)
+session.insertScore(chorusPart3)
+
+session.useTechnique(tZebraOsc1Filter(-35), { track: 'arp6S2' });
+session.useTechnique(tZebraOsc1Filter(-35), { track: 'arp6S3' });
+session.useTechnique(tZebraOsc1Filter(-35), { track: 'arp6S4' });
 
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay8, delay8 * 2, delay8 * 3, delay8 * 4], [2, 0, -2, 0], null, chordLibraries[1]),
@@ -242,24 +277,20 @@ session.insertScore({
   kick: 'D------                 d------         D------                 d------         ',
   snare:'        s              s              ss        s              s              ss',
   hat: {
-  hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
-  d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
+  // hat:  ' ttttttt ttttttt ttttttt ttttttttttttttt ttttttt ttttttt ttttttt ttttttttttttttt',
+  // d:    ' 4948474 4947454 4947454 494745424947454 4948474 4947454 4947454 494745424947454',
   },
   tLibrary: kit.tLibrary,
   }
 })
 
+arpSTracks.forEach(track => session.useTechnique(zebralette.automationTechnique.cMonoSyncBase(), { track })) // zero synths
+
 session.insertScore({
   tLibrary: makeArp6TLibraryFromMidiChords([delay7 * 2, delay7 * 4, delay7 * 6, delay7 * 8 ], [7, -7, 2, 3], null, chordLibraries[0]),
   d:    '7',
   r:    '1 2 3 4 1 2 3 4 ',
-  arp6: 'a   b   c   d   ',
-})
-
-session.insertScore({
-  tLibrary: fluid.tLibrary.fromArray(chordLibraries[0]),
-  r:       '1...+...2...+...3...+...4...+...',
-  arpPoly: 'a----   b-  c--  c--  d---  e---',
+  arp6: 'a   b   c       ',
 })
 
 for (const suffix of ['', '1', '2', '3', '4']) copyTrackMidiClips(session, 'arp6'+suffix, 'arp6S'+suffix)
