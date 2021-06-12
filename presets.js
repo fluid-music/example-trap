@@ -1,33 +1,52 @@
-const fs = require('fs')
-const path = require('path')
-const { plugins } = require('fluid-music')
+const fs = require("fs")
+const path = require("path")
+const { plugins } = require("fluid-music")
+const { Battery4Vst2 } = require("@fluid-music/battery-4")
 
-const zebraletteCPopFilename = path.join(__dirname, 'presets', 'zebralette-cpop.fxp')
-const zebraletteCPopFxpB64 = fs.readFileSync(zebraletteCPopFilename).toString('base64')
+const zebraletteCPopFilename = path.join(__dirname, "presets", "zebralette-cpop.fxp")
+const zebraletteCPopFxpB64 = fs.readFileSync(zebraletteCPopFilename).toString("base64")
 
-const zebraletteCPop2Filename = path.join(__dirname, 'presets', 'zebralette-cpop2.fxp')
-const zebraletteCPop2FxpB64 = fs.readFileSync(zebraletteCPop2Filename).toString('base64')
+const zebraletteCPop2Filename = path.join(__dirname, "presets", "zebralette-cpop2.fxp")
+const zebraletteCPop2FxpB64 = fs.readFileSync(zebraletteCPop2Filename).toString("base64")
 
-const zebraletteCMonoFilename = path.join(__dirname, 'presets', 'zebralette-cmono.FXP')
-const zebraletteCMonoFxpB64 = fs.readFileSync(zebraletteCMonoFilename).toString('base64')
+const zebraletteCMonoFilename = path.join(__dirname, "presets", "zebralette-cmono.FXP")
+const zebraletteCMonoFxpB64 = fs.readFileSync(zebraletteCMonoFilename).toString("base64")
 
-const zebraletteCMonoSyncFilename = path.join(__dirname, 'presets', 'zebralette-cmono-sync.FXP')
-const zebraletteCMonoSyncFxpB64 = fs.readFileSync(zebraletteCMonoSyncFilename).toString('base64')
+const zebraletteCMonoSyncFilename = path.join(__dirname, "presets", "zebralette-cmono-sync.FXP")
+const zebraletteCMonoSyncFxpB64 = fs.readFileSync(zebraletteCMonoSyncFilename).toString("base64")
 
-const teq128Filename = path.join(__dirname, 'presets', 'teq-128.FXP')
-const teq128B64 = fs.readFileSync(teq128Filename).toString('base64')
+const zebraletteSupersawFilename = path.join(__dirname, "presets", "supersaw.FXP")
+const zebraletteSupersawFxpB64 = fs.readFileSync(zebraletteSupersawFilename).toString("base64")
 
-const teq12678Filename = path.join(__dirname, 'presets', 'teq-12678.FXP')
-const teq12678B64 = fs.readFileSync(teq12678Filename).toString('base64')
+const zebraletteBassFilename = path.join(__dirname, "presets", "bass.FXP")
+const zebraletteBassFxpB64 = fs.readFileSync(zebraletteBassFilename).toString("base64")
 
-const dfHallLong = path.join(__dirname, 'presets', 'dfhall-long.FXP')
+const zebraletteLeadFilename = path.join(__dirname, "presets", "lead.FXP")
+const zebraletteLeadFxpB64 = fs.readFileSync(zebraletteLeadFilename).toString("base64")
+
+const zebralettePad1Filename = path.join(__dirname, "presets", "pad1.FXP")
+const zebralettePad1FxpB64 = fs.readFileSync(zebralettePad1Filename).toString("base64")
+
+const teq128Filename = path.join(__dirname, "presets", "teq-128.FXP")
+const teq128B64 = fs.readFileSync(teq128Filename).toString("base64")
+
+const teq12678Filename = path.join(__dirname, "presets", "teq-12678.FXP")
+const teq12678B64 = fs.readFileSync(teq12678Filename).toString("base64")
+
+const dfHallLong = path.join(__dirname, "presets", "dfhall-long.FXP")
 const dfHallLongFxpB64 = fs.readFileSync(dfHallLong)
-const dfHallShort = path.join(__dirname, 'presets', 'dfhall-short.FXP')
+const dfHallShort = path.join(__dirname, "presets", "dfhall-short.FXP")
 const dfHallShortFxpB64 = fs.readFileSync(dfHallShort)
+
+const dmxKitFilename = path.join(__dirname, "presets", "dmxkit.FXP")
+const dmxKitFxpB64 = fs.readFileSync(dmxKitFilename).toString("base64")
+
+const realestKitFilename = path.join(__dirname, "presets", "realestkit.FXP")
+const realestKitFxpB64 = fs.readFileSync(realestKitFilename).toString("base64")
 
 module.exports = {
   zebralette: {
-    /** @param args {import('fluid-music').plugins.ZebraletteVst2Parameters} */
+    /** @param args {import("fluid-music").plugins.ZebraletteVst2Parameters} */
     cPop(params) {
       const zebralette = new plugins.ZebraletteVst2()
       zebralette.vst2.presetBase64 = zebraletteCPopFxpB64
@@ -43,6 +62,30 @@ module.exports = {
     cMono(params) {
       const zebralette = new plugins.ZebraletteVst2()
       zebralette.vst2.presetBase64 = zebraletteCMonoFxpB64
+      if (params) zebralette.parameters = params
+      return zebralette
+    },
+    cSupersaw(params) {
+      const zebralette = new plugins.ZebraletteVst2()
+      zebralette.vst2.presetBase64 = zebraletteSupersawFxpB64
+      if (params) zebralette.parameters = params
+      return zebralette
+    },
+    cBass(params) {
+      const zebralette = new plugins.ZebraletteVst2()
+      zebralette.vst2.presetBase64 = zebraletteBassFxpB64
+      if (params) zebralette.parameters = params
+      return zebralette
+    },
+    cLead(params) {
+      const zebralette = new plugins.ZebraletteVst2()
+      zebralette.vst2.presetBase64 = zebraletteLeadFxpB64
+      if (params) zebralette.parameters = params
+      return zebralette
+    },
+    cPad1(params) {
+      const zebralette = new plugins.ZebraletteVst2()
+      zebralette.vst2.presetBase64 = zebralettePad1FxpB64
       if (params) zebralette.parameters = params
       return zebralette
     },
@@ -112,6 +155,20 @@ module.exports = {
     zero12678() {
       const plugin  = new plugins.TEqualizerVst2()
       plugin.vst2.presetBase64 = teq12678B64
+      return plugin
+    },
+  },
+  battery4: {
+    dmxKit(params) {
+      const plugin = new Battery4Vst2()
+      plugin.vst2.presetBase64 = dmxKitFxpB64
+      if (params) plugin.parameters = params
+      return plugin
+    },
+    realestKit(params) {
+      const plugin = new Battery4Vst2()
+      plugin.vst2.presetBase64 = realestKitFxpB64
+      if (params) plugin.parameters = params
       return plugin
     },
   }

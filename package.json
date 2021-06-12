@@ -12,9 +12,11 @@
   "author": "Charles Holbrow",
   "license": "UNLICENSED",
   "dependencies": {
+    "@fluid-music/battery-4": "^0.0.1",
+    "@fluid-music/battery4": "file:../battery4-plugin",
     "@fluid-music/kit": "^4.0.2",
     "@fluid-music/rides": "0.0.2",
-    "@fluid-music/tr-808": "file:../open-drums/tr-808",
-    "fluid-music": "file:../../fluid/fluid-music"
+    "@fluid-music/tr-808": "^0.0.2",
+    "fluid-music": "^0.9.5"
   }
 }

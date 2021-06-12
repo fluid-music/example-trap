@@ -1,10 +1,20 @@
-# @fluid-music/trap
+# Fluid Demo Trap Remix
 
-Trap music example using the fluid-music
+A simple trap remix to illustrate working with material from an existing fluid composition. See [CharlesHolbrow/fluid-music](https://github.com/charlesholbrow/fluid-music) for more info.
 
-**Work In Progress**
+## To run:
 
-This project demonstrates unreleased/beta fluid-music features:
+First, in another window:
 
-- It uses a not-yet-released beta version of the `cybr` server
-- It uses the beta version of `fluid-music@0.9.4-beta-1`
+```bash
+cybr -f
+```
+
+Then, with the `cybr` server running:
+
+```bash
+npm install
+node .
+open fluid-demotrapremix.RPP
+```
+
