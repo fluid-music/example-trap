@@ -126,7 +126,7 @@ const session = new FluidSession({ bpm: 63, loopStartTime: 1, loopDuration: 4 },
 // Insert the score object.
 session.insertScore(score, { startTime: 1 })
 session.finalize()
-const sessionName = 'trap'
+const sessionName = 'trap-example-1'
 session.saveAsReaperFile(sessionName)
 // session.sendToServer()
   .catch(e => console.error('Error:', e))
