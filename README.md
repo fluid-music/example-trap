@@ -27,3 +27,5 @@ node example-2.js
 ```
 
 This will generate `trap-example-1.RPP` and `trap-example-2.RPP` which can be opened in [Reaper](https://reaper.fm).
+
+<img width="1033" alt="Screen Shot 2021-06-19 at 9 33 44 PM" src="https://user-images.githubusercontent.com/1512520/122660066-0e25a580-d14c-11eb-80b4-24a5dbc06b20.png">
